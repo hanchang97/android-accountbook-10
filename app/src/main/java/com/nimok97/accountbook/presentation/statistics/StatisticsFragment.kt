@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.nimok97.accountbook.R
+import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentStatisticsBinding
 
 class StatisticsFragment: Fragment() {
@@ -18,6 +19,7 @@ class StatisticsFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        printLog("StatisticsFragment / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_statistics, container, false)
         return binding.root
     }

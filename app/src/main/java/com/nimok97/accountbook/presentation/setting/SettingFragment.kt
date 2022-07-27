@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.nimok97.accountbook.R
+import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentSettingBinding
 
 class SettingFragment: Fragment() {
@@ -18,6 +19,7 @@ class SettingFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        printLog("SettingFragment / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false)
         return binding.root
     }

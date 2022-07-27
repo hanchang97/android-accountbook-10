@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.nimok97.accountbook.R
+import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentCalendarBinding
 
 class CalendarFragment: Fragment() {
@@ -18,6 +19,7 @@ class CalendarFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        printLog("CalendarFragment / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_calendar, container, false)
         return binding.root
     }
