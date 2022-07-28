@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentStatisticsBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StatisticsFragment: Fragment() {
 
     private lateinit var binding: FragmentStatisticsBinding
