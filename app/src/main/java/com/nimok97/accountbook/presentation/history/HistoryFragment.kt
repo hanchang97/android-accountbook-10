@@ -55,7 +55,7 @@ class HistoryFragment : Fragment() {
 
     private fun initView() {
         setFab()
-        historyViewModel.getAllHistoryByYearAndMonth(2022, 7)
+        historyViewModel.getHistoryItemList(2022, 7)
     }
 
     private fun setFab() {
