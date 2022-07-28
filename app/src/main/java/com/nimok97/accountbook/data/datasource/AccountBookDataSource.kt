@@ -1,9 +1,11 @@
 package com.nimok97.accountbook.data.datasource
 
 import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.CategoryDao
+import com.nimok97.accountbook.data.dao.HistoryDao
 import com.nimok97.accountbook.data.dao.MethodDao
 import com.nimok97.accountbook.domain.model.Category
 import com.nimok97.accountbook.domain.model.History
@@ -11,19 +13,19 @@ import com.nimok97.accountbook.domain.model.Method
 
 class AccountBookDataSource(private val dbHelper: DBHelper) {
 
-    suspend fun addHistory(history: History): Result<Long> { // 내역 추가
+    suspend fun addHistory(historyDao: HistoryDao): Result<Long> { // 내역 추가
         runCatching {
             val db = dbHelper.writableDatabase
             val value = ContentValues().apply {
-                put(HisitoryDBStructure.COLUMN_TYPE, history.type)
-                put(HisitoryDBStructure.COLUMN_YEAR, history.year)
-                put(HisitoryDBStructure.COLUMN_MONTH, history.month)
-                put(HisitoryDBStructure.COLUMN_DAY_NUM, history.dayNum)
-                put(HisitoryDBStructure.COLUMN_DAY_STR, history.dayStr)
-                put(HisitoryDBStructure.COLUMN_AMOUNT, history.amount)
-                put(HisitoryDBStructure.COLUMN_CONTENT, history.content)
-                put(HisitoryDBStructure.COLUMN_CATEGORY_ID, history.categoryId)
-                put(HisitoryDBStructure.COLUMN_METHOD_ID, history.methodId)
+                put(HisitoryDBStructure.COLUMN_TYPE, historyDao.type)
+                put(HisitoryDBStructure.COLUMN_YEAR, historyDao.year)
+                put(HisitoryDBStructure.COLUMN_MONTH, historyDao.month)
+                put(HisitoryDBStructure.COLUMN_DAY_NUM, historyDao.dayNum)
+                put(HisitoryDBStructure.COLUMN_DAY_STR, historyDao.dayStr)
+                put(HisitoryDBStructure.COLUMN_AMOUNT, historyDao.amount)
+                put(HisitoryDBStructure.COLUMN_CONTENT, historyDao.content)
+                put(HisitoryDBStructure.COLUMN_CATEGORY_ID, historyDao.categoryId)
+                put(HisitoryDBStructure.COLUMN_METHOD_ID, historyDao.methodId)
             }
             db.insert(HisitoryDBStructure.TABLE_NAME, null, value)
         }.onSuccess {
@@ -37,7 +39,7 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
     suspend fun getHistoriesByYearAndMonth(
         year: Int,
         month: Int
-    ): Result<List<History>> { // 연, 월 값으로 한 달의 내역 조회
+    ): Result<List<History>> { // 연, 월 값으로 해당하는 달의 전체 내역 조회
         runCatching {
             val db = dbHelper.readableDatabase
 
@@ -80,7 +82,6 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
                         cursor.getInt(cursor.getColumnIndex(HisitoryDBStructure.COLUMN_CATEGORY_ID))
                     )
                 )
-                printLog("${histories.last()}")
             }
             cursor.close()
             histories
@@ -151,8 +152,30 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
-    suspend fun getCategoryById() {
-
+    suspend fun getCategoryById(categoryId: Int): Result<Category> {  // id 값으로 해당 카테고리 가져오기
+        runCatching {
+            var db = dbHelper.readableDatabase
+            val cursor = db.rawQuery(
+                "SELECT * FROM " + CategoryDBStructure.TABLE_NAME +
+                        " WHERE ${CategoryDBStructure.COLUMN_ID} == $categoryId ", null
+            )
+            var category = Category(-1, -1, "", "")
+            while (cursor.moveToNext()) {
+                val id = cursor.getInt(cursor.getColumnIndex(CategoryDBStructure.COLUMN_ID))
+                val type = cursor.getInt(cursor.getColumnIndex(CategoryDBStructure.COLUMN_TYPE))
+                val content =
+                    cursor.getString(cursor.getColumnIndex(CategoryDBStructure.COLUMN_CONTENT))
+                val color =
+                    cursor.getString(cursor.getColumnIndex(CategoryDBStructure.COLUMN_COLOR))
+                category = Category(id, type, content, color)
+            }
+            category
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
     }
 
     suspend fun updateCategory() {
@@ -207,8 +230,27 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
-    suspend fun getMethodById() {
-
+    suspend fun getMethodById(methodId: Int): Result<Method> { // id 값으로 해당 결제 수단 가져오기
+        runCatching {
+            var db = dbHelper.readableDatabase
+            val cursor = db.rawQuery(
+                "SELECT * FROM " + MethodDBStructure.TABLE_NAME +
+                        " WHERE ${MethodDBStructure.COLUMN_ID} == $methodId ", null
+            )
+            var method = Method(-1, "")
+            while (cursor.moveToNext()) {
+                val id = cursor.getInt(cursor.getColumnIndex(MethodDBStructure.COLUMN_ID))
+                val content =
+                    cursor.getString(cursor.getColumnIndex(MethodDBStructure.COLUMN_CONTENT))
+                method = Method(id, content)
+            }
+            method
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
     }
 
     suspend fun updateMethod() {

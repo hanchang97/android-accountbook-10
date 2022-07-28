@@ -17,7 +17,7 @@ class GetAllMethodUseCase(
                 }
             }
             result.isFailure -> {
-
+                printLog("get all method fail")
             }
         }
     }

@@ -8,6 +8,7 @@ import com.nimok97.accountbook.domain.repository.MethodRepository
 class MethodRepositoryImpl(
     private val accountBookDataSource: AccountBookDataSource
 ) : MethodRepository {
+
     override suspend fun addMethod(methodDao: MethodDao): Result<Long> {
         return accountBookDataSource.addMethod(methodDao)
     }

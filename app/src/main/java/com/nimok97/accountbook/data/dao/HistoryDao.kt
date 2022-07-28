@@ -1,7 +1,6 @@
-package com.nimok97.accountbook.domain.model
+package com.nimok97.accountbook.data.dao
 
-data class History(
-    val id: Int,
+data class HistoryDao(
     val type: Int, // 0 = 수입, 1 = 지출
     val year: Int,
     val month: Int,

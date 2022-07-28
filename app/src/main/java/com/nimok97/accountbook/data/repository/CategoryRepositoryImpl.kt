@@ -8,6 +8,7 @@ import com.nimok97.accountbook.domain.repository.CategoryRepository
 class CategoryRepositoryImpl(
     private val accountBookDataSource: AccountBookDataSource
 ) : CategoryRepository {
+
     override suspend fun addCategory(categoryDao: CategoryDao): Result<Long> {
         return accountBookDataSource.addCategory(categoryDao)
     }

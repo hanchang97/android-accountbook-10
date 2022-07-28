@@ -2,8 +2,10 @@ package com.nimok97.accountbook.di
 
 import com.nimok97.accountbook.data.datasource.AccountBookDataSource
 import com.nimok97.accountbook.data.repository.CategoryRepositoryImpl
+import com.nimok97.accountbook.data.repository.HistoryRepositoryImpl
 import com.nimok97.accountbook.data.repository.MethodRepositoryImpl
 import com.nimok97.accountbook.domain.repository.CategoryRepository
+import com.nimok97.accountbook.domain.repository.HistoryRepository
 import com.nimok97.accountbook.domain.repository.MethodRepository
 import dagger.Module
 import dagger.Provides
@@ -29,6 +31,14 @@ class RepositoryModule {
         accountBookDataSource: AccountBookDataSource
     ): MethodRepository {
         return MethodRepositoryImpl(accountBookDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun provideHistoryRepository(
+        accountBookDataSource: AccountBookDataSource
+    ): HistoryRepository {
+        return HistoryRepositoryImpl(accountBookDataSource)
     }
 
 }

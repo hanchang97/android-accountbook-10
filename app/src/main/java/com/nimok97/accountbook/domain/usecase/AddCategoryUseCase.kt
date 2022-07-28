@@ -9,13 +9,13 @@ class AddCategoryUseCase(
 ) {
     suspend fun addCategory(categoryDao: CategoryDao) {
         val result = categoryRepository.addCategory(categoryDao)
-       when {
-           result.isSuccess -> {
-               printLog("add category success")
-           }
-           result.isFailure -> {
-               printLog("add category fail")
-           }
-       }
+        when {
+            result.isSuccess -> {
+                printLog("add category success")
+            }
+            result.isFailure -> {
+                printLog("add category fail")
+            }
+        }
     }
 }
