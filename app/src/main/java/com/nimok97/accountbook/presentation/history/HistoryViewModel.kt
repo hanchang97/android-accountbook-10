@@ -47,18 +47,16 @@ class HistoryViewModel @Inject constructor(
                         if (it.isEmpty()) {
                             printLog("수입/지출 내역이 없습니다")
                         } else {
-                            val tempList = MutableList(it.size) {
-                                HistoryItem(null, null, null, null, null)
-                            }
-
+                            val tempList = MutableList(it.size) { HistoryItem() }
                             (it.indices).map {
                                 tempList[it].history = resultList[it]
                                 tempList[it].isLastItem = false
                                 tempList[it].viewType = "content"
 
                                 async {
-                                    val category = getCategoryByIdUseCase.getCategoryById(resultList[it].categoryId)
-                                    when{
+                                    val category =
+                                        getCategoryByIdUseCase.getCategoryById(resultList[it].categoryId)
+                                    when {
                                         category.isSuccess -> {
                                             tempList[it].category = category.getOrNull()
                                         }
@@ -66,8 +64,9 @@ class HistoryViewModel @Inject constructor(
                                 }
 
                                 async {
-                                    val method = getMethodByIdUseCase.getMethodById(resultList[it].methodId)
-                                    when{
+                                    val method =
+                                        getMethodByIdUseCase.getMethodById(resultList[it].methodId)
+                                    when {
                                         method.isSuccess -> {
                                             tempList[it].method = method.getOrNull()
                                         }
@@ -91,8 +90,41 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    fun convertHistoryItemList(tempList: MutableList<HistoryItem>){
+    fun convertHistoryItemList(tempList: MutableList<HistoryItem>) {
+        historyItemList.clear()
+        tempList.forEachIndexed { index, historyItem ->
+            if (index == 0) {
+                historyItemList.add(HistoryItem("header", historyItem.history))
+            }
 
+            if (index == tempList.size - 1) {
+                historyItemList.add(
+                    HistoryItem(
+                        "content",
+                        historyItem.history,
+                        historyItem.category,
+                        historyItem.method,
+                        isLastItem = true
+                    )
+                )
+            } else {
+                val curDay = historyItem.history!!.dayNum
+                val nextDay = tempList[index + 1].history!!.dayNum
+
+                if (curDay == nextDay) {
+                    printLog("$curDay $nextDay")
+                    historyItemList.add(historyItem)
+                } else { // 다음 원소 값으로 헤더 넣어주기
+                    historyItemList.add(historyItem)
+                    historyItemList.add(HistoryItem("header", tempList[index + 1].history))
+                }
+            }
+        }
+
+        printLog("데이터 조회 및 사용가능 형태로 변환")
+        historyItemList.forEach {
+            printLog("$it")
+        }
     }
 
 }
