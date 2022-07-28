@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomAppBar">
+        <attr name="showLeftButton" format="boolean" />
+        <attr name="showRightButton" format="boolean" />
+        <attr name="leftImage" format="reference|integer" />
+        <attr name="rightImage" format="reference|integer" />
+        <attr name="title" format="string" />
+    </declare-styleable>
+</resources>
