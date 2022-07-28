@@ -17,4 +17,7 @@ class CategoryRepositoryImpl(
         return accountBookDataSource.getAllCategory()
     }
 
+    override suspend fun getCategoryById(categoryId: Int): Result<Category> {
+        return accountBookDataSource.getCategoryById(categoryId)
+    }
 }

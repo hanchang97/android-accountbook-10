@@ -17,4 +17,7 @@ class MethodRepositoryImpl(
         return accountBookDataSource.getAllMethod()
     }
 
+    override suspend fun getMethodById(methodId: Int): Result<Method> {
+        return accountBookDataSource.getMethodById(methodId)
+    }
 }

@@ -10,6 +10,7 @@ class GetAllCategoryUseCase(
         val result = categoryRepository.getAllCategory()
         when{
             result.isSuccess -> {
+                printLog("get all category success")
                 result.getOrNull()?.let {
                     it.forEach {
                         printLog("$it")

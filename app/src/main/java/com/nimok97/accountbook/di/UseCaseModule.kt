@@ -44,4 +44,27 @@ class UseCaseModule {
     fun provideGetAllHistoryByYearAndMonthUseCase(historyRepository: HistoryRepository) =
         GetAllHistoryByYearAndMonthUseCase(historyRepository)
 
+    @Singleton
+    @Provides
+    fun provideGetCategoryByIdUseCase(categoryRepository: CategoryRepository) =
+        GetCategoryByIdUseCase(categoryRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetMethodByIdUseCase(methodRepository: MethodRepository) =
+        GetMethodByIdUseCase(methodRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetHistoryItemListUseCase(
+        getAllHistoryByYearAndMonthUseCase: GetAllHistoryByYearAndMonthUseCase,
+        getCategoryByIdUseCase: GetCategoryByIdUseCase,
+        getMethodByIdUseCase: GetMethodByIdUseCase
+    ) =
+        GetHistoryItemListUseCase(
+            getAllHistoryByYearAndMonthUseCase,
+            getCategoryByIdUseCase,
+            getMethodByIdUseCase
+        )
+
 }

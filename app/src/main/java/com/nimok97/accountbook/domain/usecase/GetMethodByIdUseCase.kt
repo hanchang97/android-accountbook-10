@@ -1,25 +1,25 @@
 package com.nimok97.accountbook.domain.usecase
 
 import com.nimok97.accountbook.common.printLog
+import com.nimok97.accountbook.domain.model.Method
 import com.nimok97.accountbook.domain.repository.MethodRepository
 
-class GetAllMethodUseCase(
+class GetMethodByIdUseCase(
     private val methodRepository: MethodRepository
 ) {
-    suspend fun getAllMethod(){
-        val result = methodRepository.getAllMethod()
-        when{
+    suspend fun getMethodById(methodId: Int): Result<Method> {
+        val result = methodRepository.getMethodById(methodId)
+        when {
             result.isSuccess -> {
-                printLog("get all method success")
+                printLog("get method by id success")
                 result.getOrNull()?.let {
-                    it.forEach {
-                        printLog("$it")
-                    }
+                    printLog("$it")
                 }
             }
             result.isFailure -> {
-                printLog("get all method fail")
+                printLog("get method by id fail")
             }
         }
+        return result
     }
 }
