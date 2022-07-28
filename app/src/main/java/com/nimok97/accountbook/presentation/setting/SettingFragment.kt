@@ -10,12 +10,13 @@ import androidx.fragment.app.viewModels
 import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.CategoryDao
+import com.nimok97.accountbook.data.dao.MethodDao
 import com.nimok97.accountbook.databinding.FragmentSettingBinding
 import com.nimok97.accountbook.domain.model.Category
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SettingFragment: Fragment() {
+class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
     private val settingViewModel: SettingViewModel by viewModels()
@@ -32,16 +33,23 @@ class SettingFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //saveDefaultMethod()
 
-        //saveDefaultCategory()
         initView()
     }
 
-    private fun saveDefaultMethod(){
-
+    private fun saveDefaultData(){
+        saveDefaultCategory()
+        saveDefaultMethod()
     }
 
-    private fun saveDefaultCategory(){
+    private fun saveDefaultMethod() { // 기본 데이터
+        // 결제수단
+        settingViewModel.addMethod(MethodDao("현대카드"))
+        settingViewModel.addMethod(MethodDao("카카오뱅크 체크카드"))
+    }
+
+    private fun saveDefaultCategory() { // 기본 데이터
         // 수입
         settingViewModel.addCategory(CategoryDao(0, "월급", "#9BD182"))
         settingViewModel.addCategory(CategoryDao(0, "용돈", "#EDCF65"))
@@ -57,7 +65,8 @@ class SettingFragment: Fragment() {
         settingViewModel.addCategory(CategoryDao(1, "의료/건강", "#6ED5EB"))
     }
 
-    private fun initView(){
+    private fun initView() {
         settingViewModel.getAllCategory()
+        settingViewModel.getAllMethod()
     }
 }

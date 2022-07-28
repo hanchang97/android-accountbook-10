@@ -4,12 +4,14 @@ import android.content.ContentValues
 import android.util.Log
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.CategoryDao
+import com.nimok97.accountbook.data.dao.MethodDao
 import com.nimok97.accountbook.domain.model.Category
 import com.nimok97.accountbook.domain.model.History
+import com.nimok97.accountbook.domain.model.Method
 
 class AccountBookDataSource(private val dbHelper: DBHelper) {
 
-    suspend fun addHistory(history: History): Result<Long> {
+    suspend fun addHistory(history: History): Result<Long> { // 내역 추가
         runCatching {
             val db = dbHelper.writableDatabase
             val value = ContentValues().apply {
@@ -32,7 +34,10 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
-    suspend fun getHistoriesByYearAndMonth(year: Int, month: Int): Result<List<History>> {
+    suspend fun getHistoriesByYearAndMonth(
+        year: Int,
+        month: Int
+    ): Result<List<History>> { // 연, 월 값으로 한 달의 내역 조회
         runCatching {
             val db = dbHelper.readableDatabase
 
@@ -87,11 +92,11 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
-    suspend fun updateHistory(id: Int, newHistory: History) {
+    suspend fun updateHistory(id: Int, newHistory: History) { // 내역 정보 업데이트
 
     }
 
-    suspend fun addCategory(categoryDao: CategoryDao): Result<Long> {
+    suspend fun addCategory(categoryDao: CategoryDao): Result<Long> { // 수입/지출 카테고리 추가
         runCatching {
             val db = dbHelper.writableDatabase
             val value = ContentValues().apply {
@@ -108,7 +113,7 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
-    suspend fun getAllCategory(): Result<List<Category>> {
+    suspend fun getAllCategory(): Result<List<Category>> { // 모든 카테고리 조회
         runCatching {
             val db = dbHelper.readableDatabase
 
@@ -154,12 +159,52 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
 
     }
 
-    suspend fun addMethod() {
-
+    suspend fun addMethod(methodDao: MethodDao): Result<Long> { // 결제 수단 추가
+        runCatching {
+            val db = dbHelper.writableDatabase
+            val value = ContentValues().apply {
+                put(MethodDBStructure.COLUMN_CONTENT, methodDao.content)
+            }
+            db.insert(MethodDBStructure.TABLE_NAME, null, value)
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
     }
 
-    suspend fun getAllMethod() {
+    suspend fun getAllMethod(): Result<List<Method>> { // 모든 결제 수단 조회
+        runCatching {
+            val db = dbHelper.readableDatabase
 
+            val columns = arrayOf(
+                MethodDBStructure.COLUMN_ID,
+                MethodDBStructure.COLUMN_CONTENT
+            )
+
+            val cursor = db.query(
+                MethodDBStructure.TABLE_NAME,
+                columns, null, null, null, null, null
+            )
+
+            val methods = ArrayList<Method>()
+            while (cursor.moveToNext()) {
+                methods.add(
+                    Method(
+                        cursor.getInt(cursor.getColumnIndex(MethodDBStructure.COLUMN_ID)),
+                        cursor.getString(cursor.getColumnIndex(MethodDBStructure.COLUMN_CONTENT))
+                    )
+                )
+            }
+            cursor.close()
+            methods
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
     }
 
     suspend fun getMethodById() {
