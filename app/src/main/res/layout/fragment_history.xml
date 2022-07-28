@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="mainViewModel"
             type="com.nimok97.accountbook.presentation.MainViewModel" />
@@ -18,21 +19,23 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:leftImage="@drawable/ic_left"
-            app:rightImage="@drawable/ic_right"/>
+            app:rightImage="@drawable/ic_right"
+            app:showLeftButton="true"
+            app:showRightButton="true" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/primary_yellow"
-            app:tint="@color/white"
+            android:onClick="@{() -> mainViewModel.fabClick()}"
             app:borderWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_fab"
-            android:onClick="@{() -> mainViewModel.fabClick()}"/>
+            app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

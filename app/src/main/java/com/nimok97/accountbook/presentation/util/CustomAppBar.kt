@@ -50,10 +50,35 @@ class CustomAppBar(context: Context, attrs: AttributeSet) : ConstraintLayout(con
         titleTextView.text = title
         leftImageView.setImageResource(leftImage)
         rightImageView.setImageResource(rightImage)
-        if(!showLeftButton) leftImageView.visibility = View.GONE
-        if(!showRightButton) rightImageView.visibility = View.GONE
+        if (!showLeftButton) leftImageView.visibility = View.GONE
+        if (!showRightButton) rightImageView.visibility = View.GONE
     }
 
+    fun setOnLeftImageClickListener(listener: LeftImageClickListener) {
+        val leftImage = findViewById<ImageView>(R.id.custom_iv_left)
+        leftImage.setOnClickListener {
+            listener.clickLeft(it)
+        }
+    }
 
+    fun setOnRightImageClickListener(listener: RightImageClickListener) {
+        val rightImage = findViewById<ImageView>(R.id.custom_iv_right)
+        rightImage.setOnClickListener {
+            listener.clickRight(it)
+        }
+    }
+
+    fun setTitle(title: String) {
+        val titleTextView = findViewById<TextView>(R.id.custom_tv_title)
+        titleTextView.text = title
+    }
+
+    interface LeftImageClickListener {
+        fun clickLeft(view: View)
+    }
+
+    interface RightImageClickListener {
+        fun clickRight(view: View)
+    }
 
 }
