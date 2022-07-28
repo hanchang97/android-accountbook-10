@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentCalendarBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CalendarFragment: Fragment() {
 
     private lateinit var binding: FragmentCalendarBinding

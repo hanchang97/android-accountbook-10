@@ -18,8 +18,10 @@ import com.nimok97.accountbook.presentation.history.manage.ManageHistoryFragment
 import com.nimok97.accountbook.presentation.setting.SettingFragment
 import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
 import com.nimok97.accountbook.presentation.util.FragmentStackManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
