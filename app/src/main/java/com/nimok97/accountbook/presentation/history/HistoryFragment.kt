@@ -7,6 +7,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
@@ -14,6 +18,8 @@ import com.nimok97.accountbook.databinding.FragmentHistoryBinding
 import com.nimok97.accountbook.presentation.MainViewModel
 import com.nimok97.accountbook.presentation.util.CustomAppBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HistoryFragment : Fragment() {
@@ -21,6 +27,8 @@ class HistoryFragment : Fragment() {
     private lateinit var binding: FragmentHistoryBinding
     private val mainViewModel: MainViewModel by activityViewModels()
     private val historyViewModel: HistoryViewModel by activityViewModels()
+
+    private lateinit var historyItemAdapter: HistoryItemAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,32 +52,20 @@ class HistoryFragment : Fragment() {
     private fun saveDefaultData() {
         historyViewModel.addHistory(
             HistoryDao(
-                0, 2022, 7, 9,
-                "토", 10000, "용돈", -1, 2
+                0, 2022, 7, 16,
+                "토", 20000, "용돈", -1, 2
             )
         )
         historyViewModel.addHistory(
             HistoryDao(
-                0, 2022, 7, 9,
-                "토", 500000, "아르바이트 월급", -1, 1
+                1, 2022, 7, 9,
+                "토", 50000, "전시회 방문", 2, 7
             )
         )
         historyViewModel.addHistory(
             HistoryDao(
-                1, 2022, 7, 3,
-                "일", 30000, "반팔티 구매", 2, 4
-            )
-        )
-        historyViewModel.addHistory(
-            HistoryDao(
-                1, 2022, 7, 28,
-                "목", 20000, "저녁 식사", 1, 10
-            )
-        )
-        historyViewModel.addHistory(
-            HistoryDao(
-                1, 2022, 7, 29,
-                "금", 40000, "치과 진료비", 1, 9
+                0, 2022, 7, 3,
+                "일", 5000, "당근마켓", -1, 8
             )
         )
     }
@@ -77,6 +73,9 @@ class HistoryFragment : Fragment() {
     private fun initView() {
         setFab()
         setAppBar()
+        setRecyclerView()
+        observeData()
+
         historyViewModel.getHistoryItemList(2022, 7)
     }
 
@@ -88,6 +87,24 @@ class HistoryFragment : Fragment() {
         binding.customAppBar.setOnLeftImageClickListener(LeftListener())
         binding.customAppBar.setOnRightImageClickListener(RightListener())
         binding.customAppBar.setTitle("2022년 7월")
+    }
+
+    private fun setRecyclerView() {
+        historyItemAdapter = HistoryItemAdapter()
+        binding.rvHistory.apply {
+            adapter = historyItemAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun observeData(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                historyViewModel.historyItemListFlow.collect{
+                    historyItemAdapter.submitList(it)
+                }
+            }
+        }
     }
 
     inner class LeftListener : CustomAppBar.LeftImageClickListener {

@@ -10,12 +10,11 @@ import com.nimok97.accountbook.domain.usecase.GetAllHistoryByYearAndMonthUseCase
 import com.nimok97.accountbook.domain.usecase.GetCategoryByIdUseCase
 import com.nimok97.accountbook.domain.usecase.GetMethodByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +28,8 @@ class HistoryViewModel @Inject constructor(
     private val _errorEvent = MutableSharedFlow<Boolean>()
     val errorEvent = _errorEvent.asSharedFlow()
 
-    val historyItemList = mutableListOf<HistoryItem>()
+    private val _historyItemListFlow = MutableStateFlow<List<HistoryItem>>(emptyList())
+    val historyItemListFlow: StateFlow<List<HistoryItem>> = _historyItemListFlow
 
     fun addHistory(historyDao: HistoryDao) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -90,8 +90,8 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    fun convertHistoryItemList(tempList: MutableList<HistoryItem>) {
-        historyItemList.clear()
+    suspend fun convertHistoryItemList(tempList: MutableList<HistoryItem>) {
+        val historyItemList = mutableListOf<HistoryItem>()
         tempList.forEachIndexed { index, historyItem ->
             if (index == 0) {
                 historyItemList.add(HistoryItem("header", historyItem.history))
@@ -115,7 +115,12 @@ class HistoryViewModel @Inject constructor(
                     printLog("$curDay $nextDay")
                     historyItemList.add(historyItem)
                 } else { // 다음 원소 값으로 헤더 넣어주기
-                    historyItemList.add(historyItem)
+                    historyItemList.add(
+                        HistoryItem(
+                            "content", historyItem.history, historyItem.category,
+                            historyItem.method, true
+                        )
+                    )
                     historyItemList.add(HistoryItem("header", tempList[index + 1].history))
                 }
             }
@@ -125,6 +130,7 @@ class HistoryViewModel @Inject constructor(
         historyItemList.forEach {
             printLog("$it")
         }
-    }
 
+        _historyItemListFlow.value = historyItemList
+    }
 }

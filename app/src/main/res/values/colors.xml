@@ -50,4 +50,7 @@
     <color name="yellow4">#E29C4D</color>
     <color name="yellow5">#E39145</color>
 
+    <color name="income">#4EAABA</color>
+    <color name="expenditure">#E75B3F</color>
+
 </resources>
