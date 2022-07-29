@@ -131,6 +131,8 @@ class HistoryViewModel @Inject constructor(
             printLog("$it")
         }
 
-        _historyItemListFlow.value = historyItemList
+        withContext(Dispatchers.Main){
+            _historyItemListFlow.value = historyItemList
+        }
     }
 }

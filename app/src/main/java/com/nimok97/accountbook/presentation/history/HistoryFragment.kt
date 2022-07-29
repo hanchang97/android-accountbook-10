@@ -52,20 +52,20 @@ class HistoryFragment : Fragment() {
     private fun saveDefaultData() {
         historyViewModel.addHistory(
             HistoryDao(
-                0, 2022, 7, 16,
-                "토", 20000, "용돈", -1, 2
+                1, 2022, 7, 29,
+                "금", 10000, "도시락", 1, 10
             )
         )
         historyViewModel.addHistory(
             HistoryDao(
-                1, 2022, 7, 9,
-                "토", 50000, "전시회 방문", 2, 7
+                1, 2022, 7, 28,
+                "목", 40000, "청바지 구입", 2, 4
             )
         )
         historyViewModel.addHistory(
             HistoryDao(
-                0, 2022, 7, 3,
-                "일", 5000, "당근마켓", -1, 8
+                1, 2022, 7, 16,
+                "토", 15000, "영화 관람", 2, 7
             )
         )
     }
