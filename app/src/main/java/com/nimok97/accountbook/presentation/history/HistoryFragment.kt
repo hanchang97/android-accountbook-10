@@ -71,16 +71,11 @@ class HistoryFragment : Fragment() {
     }
 
     private fun initView() {
-        setFab()
         setAppBar()
         setRecyclerView()
         observeData()
 
         historyViewModel.getHistoryItemList(2022, 7)
-    }
-
-    private fun setFab() {
-
     }
 
     private fun setAppBar() {

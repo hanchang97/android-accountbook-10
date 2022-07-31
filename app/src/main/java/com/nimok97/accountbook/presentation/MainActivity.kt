@@ -16,6 +16,7 @@ import com.nimok97.accountbook.presentation.calendar.CalendarFragment
 import com.nimok97.accountbook.presentation.history.HistoryFragment
 import com.nimok97.accountbook.presentation.history.manage.ManageHistoryFragment
 import com.nimok97.accountbook.presentation.setting.SettingFragment
+import com.nimok97.accountbook.presentation.setting.method.MethodFragment
 import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
 import com.nimok97.accountbook.presentation.util.FragmentStackManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private val settingFragment by lazy { SettingFragment() }
 
     private val manageHistoryFragment by lazy { ManageHistoryFragment() }
+    private val methodFragment by lazy { MethodFragment() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +95,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun collectData() {
         collectFabCliked()
+        collectSettingFragmentEvent()
+        collectMethodToSettingEvent()
     }
 
     private fun collectFabCliked() {
@@ -102,6 +106,32 @@ class MainActivity : AppCompatActivity() {
                     if (it) {
                         FragmentStackManager.pushStack(0, manageHistoryFragment)
                         changeFragment(manageHistoryFragment)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectSettingFragmentEvent(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.moveToMethodFragmentEvent.collect {
+                    if (it) {
+                        FragmentStackManager.pushStack(3, methodFragment)
+                        changeFragment(methodFragment)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectMethodToSettingEvent(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                mainViewModel.backToSettingFragmentEvent.collect {
+                    if(it){
+                        printLog("onback")
+                        onBackPressed()
                     }
                 }
             }

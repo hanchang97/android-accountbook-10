@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
@@ -35,6 +37,7 @@ import com.nimok97.accountbook.data.dao.MethodDao
 import com.nimok97.accountbook.databinding.FragmentSettingBinding
 import com.nimok97.accountbook.domain.model.Category
 import com.nimok97.accountbook.domain.model.Method
+import com.nimok97.accountbook.presentation.MainViewModel
 import com.nimok97.accountbook.presentation.theme.*
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,6 +46,7 @@ class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
     private val settingViewModel: SettingViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,6 +55,8 @@ class SettingFragment : Fragment() {
     ): View? {
         printLog("SettingFragment / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false)
+        binding.mainViewModel = mainViewModel
+        binding.lifecycleOwner = this.viewLifecycleOwner
         return binding.root
     }
 
@@ -116,20 +122,20 @@ class SettingFragment : Fragment() {
             items(methodListState) { method ->
                 ContentMehtod(method)
             }
-            item { Footer(title = "결제수단 추가하기") }
+            item { Footer(title = "결제수단 추가하기", 1) }
 
             item { Header(title = "지출 카테고리") }
             //item { ContentCategory(category = Category(100, 1, "테스트", "#4A6CC3")) }
             items(categoryExpenditureState) { category ->
                 ContentCategory(category)
             }
-            item { Footer(title = "지출 카테고리 추가하기") }
+            item { Footer(title = "지출 카테고리 추가하기", 2) }
 
             item { Header(title = "수입 카테고리") }
             items(categoryIncomeState) { category ->
                 ContentCategory(category)
             }
-            item { Footer(title = "수입 카테고리 추가하기") }
+            item { Footer(title = "수입 카테고리 추가하기", 3) }
         }
     }
 
@@ -164,8 +170,19 @@ class SettingFragment : Fragment() {
     }
 
     @Composable
-    fun Footer(title: String) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+    fun Footer(title: String, footerType: Int) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                when(footerType){
+                    1 -> {
+                        mainViewModel.moveToMethodFragment()
+                    }
+                    else -> {
+
+                    }
+                }
+            }) {
             Spacer(modifier = Modifier.height(11.dp))
             Row(
                 modifier = Modifier
