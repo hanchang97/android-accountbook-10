@@ -5,23 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,6 +33,8 @@ import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.CategoryDao
 import com.nimok97.accountbook.data.dao.MethodDao
 import com.nimok97.accountbook.databinding.FragmentSettingBinding
+import com.nimok97.accountbook.domain.model.Category
+import com.nimok97.accountbook.domain.model.Method
 import com.nimok97.accountbook.presentation.theme.*
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -105,14 +106,29 @@ class SettingFragment : Fragment() {
 
     @Composable
     fun SettingView() {
+        val methodListState = settingViewModel.methodistFlow.collectAsState().value
+        val categoryIncomeState = settingViewModel.categoryIncomeListFlow.collectAsState().value
+        val categoryExpenditureState =
+            settingViewModel.categoryExpenditureListFlow.collectAsState().value
         LazyColumn() {
             item { Header(title = "결제수단") }
+            //item { ContentMehtod(method = Method(10, "결제수단 테스트")) }
+            items(methodListState) { method ->
+                ContentMehtod(method)
+            }
             item { Footer(title = "결제수단 추가하기") }
 
             item { Header(title = "지출 카테고리") }
+            //item { ContentCategory(category = Category(100, 1, "테스트", "#4A6CC3")) }
+            items(categoryExpenditureState) { category ->
+                ContentCategory(category)
+            }
             item { Footer(title = "지출 카테고리 추가하기") }
 
             item { Header(title = "수입 카테고리") }
+            items(categoryIncomeState) { category ->
+                ContentCategory(category)
+            }
             item { Footer(title = "수입 카테고리 추가하기") }
         }
     }
@@ -172,6 +188,87 @@ class SettingFragment : Fragment() {
                     painter = painterResource(id = R.drawable.ic_plus_purple),
                     contentDescription = "plus method / category"
                 )
+            }
+            Spacer(modifier = Modifier.height(11.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp),
+                color = Primary_light_purple
+            )
+        }
+    }
+
+    @Composable
+    fun ContentMehtod(method: Method) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, 0.dp)
+        ) {
+            Spacer(modifier = Modifier.height(11.dp))
+            Text(
+                text = method.content,
+                style = TextStyle(
+                    color = Primary_purple,
+                    fontFamily = kopubworld_dotum_pro,
+                    fontWeight = FontWeight.Bold
+                ),
+                fontSize = 14.sp,
+            )
+            Spacer(modifier = Modifier.height(11.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp),
+                color = Primary_purple_40
+            )
+        }
+    }
+
+    @Composable
+    fun ContentCategory(category: Category) {
+        val intColor = android.graphics.Color.parseColor(category.color)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, 0.dp)
+        ) {
+            Spacer(modifier = Modifier.height(11.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = category.content,
+                    style = TextStyle(
+                        color = Primary_purple,
+                        fontFamily = kopubworld_dotum_pro,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    fontSize = 14.sp
+                )
+                Card(
+                    shape = RoundedCornerShape(50),
+                    backgroundColor = Color(intColor),
+                    elevation = 0.dp
+                ) {
+                    Text(
+                        text = category.content,
+                        modifier = Modifier
+                            .defaultMinSize(56.dp, 0.dp)
+                            .padding(4.dp),
+                        style = TextStyle(
+                            color = White,
+                            fontFamily = kopubworld_dotum_pro,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        fontSize = 10.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(11.dp))
             Divider(
