@@ -7,7 +7,7 @@ import com.nimok97.accountbook.domain.repository.CategoryRepository
 class AddCategoryUseCase(
     private val categoryRepository: CategoryRepository
 ) {
-    suspend fun addCategory(categoryDao: CategoryDao) {
+    suspend operator fun invoke(categoryDao: CategoryDao) {
         val result = categoryRepository.addCategory(categoryDao)
         when {
             result.isSuccess -> {
