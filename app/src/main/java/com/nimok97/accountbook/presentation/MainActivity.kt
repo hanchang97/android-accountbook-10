@@ -16,6 +16,7 @@ import com.nimok97.accountbook.presentation.calendar.CalendarFragment
 import com.nimok97.accountbook.presentation.history.HistoryFragment
 import com.nimok97.accountbook.presentation.history.manage.ManageHistoryFragment
 import com.nimok97.accountbook.presentation.setting.SettingFragment
+import com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCategoryFragment
 import com.nimok97.accountbook.presentation.setting.method.MethodFragment
 import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
 import com.nimok97.accountbook.presentation.util.FragmentStackManager
@@ -37,7 +38,9 @@ class MainActivity : AppCompatActivity() {
     private val settingFragment by lazy { SettingFragment() }
 
     private val manageHistoryFragment by lazy { ManageHistoryFragment() }
+
     private val methodFragment by lazy { MethodFragment() }
+    private val expenditureCategoryFragment by lazy { ExpenditureCategoryFragment() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun collectSettingFragmentEvent(){
+    private fun collectSettingFragmentEvent() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToMethodFragmentEvent.collect {
@@ -123,13 +126,24 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.moveToExpenditureCategoryFragmentEvent.collect {
+                    if (it) {
+                        FragmentStackManager.pushStack(3, expenditureCategoryFragment)
+                        changeFragment(expenditureCategoryFragment)
+                    }
+                }
+            }
+        }
     }
 
-    private fun collectBackEventInMethodFragment(){
+    private fun collectBackEventInMethodFragment() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.backEventInMethodFragment.collect {
-                    if(it){
+                    if (it) {
                         printLog("onback")
                         onBackPressed()
                     }

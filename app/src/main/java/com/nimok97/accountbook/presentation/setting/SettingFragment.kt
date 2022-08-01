@@ -183,6 +183,9 @@ class SettingFragment : Fragment() {
                     1 -> {
                         mainViewModel.moveToMethodFragment()
                     }
+                    2 -> {
+                        mainViewModel.moveToExpenditureCategoryFragment()
+                    }
                     else -> {
 
                     }
