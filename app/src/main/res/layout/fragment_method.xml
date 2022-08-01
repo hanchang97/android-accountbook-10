@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="methodViewModel"
+            type="com.nimok97.accountbook.presentation.setting.method.MethodViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -92,7 +94,8 @@
             app:layout_constraintDimensionRatio="328:50"
             app:layout_constraintEnd_toEndOf="@id/gl_end"
             app:layout_constraintStart_toStartOf="@id/gl_start"
-            app:shapeAppearanceOverlay="@style/addButtonRadius" />
+            app:shapeAppearanceOverlay="@style/addButtonRadius"
+            android:onClick="@{() -> methodViewModel.checkMethodExistenceByContent()}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

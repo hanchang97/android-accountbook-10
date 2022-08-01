@@ -256,9 +256,18 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
     suspend fun checkMethodExistenceByContent(content: String): Result<Boolean> { // 결제 수단 추가 시 중복체크 위함
         runCatching {
             var db = dbHelper.readableDatabase
-            val cursor = db.rawQuery(
-                "SELECT * FROM " + MethodDBStructure.TABLE_NAME +
-                        " WHERE ${MethodDBStructure.COLUMN_CONTENT} == $content ", null
+            val columns = arrayOf(
+                MethodDBStructure.COLUMN_CONTENT
+            )
+            val selection = "${MethodDBStructure.COLUMN_CONTENT} = ?"
+            val selectionArgs = arrayOf(content)
+//            val cursor = db.rawQuery(
+//                "SELECT * FROM " + MethodDBStructure.TABLE_NAME +
+//                        " WHERE ${MethodDBStructure.COLUMN_CONTENT} = $content ", null
+//            )
+            val cursor = db.query(
+                MethodDBStructure.TABLE_NAME, columns, selection, selectionArgs,
+                null, null, null
             )
             var count = 0
             while (cursor.moveToNext()) {

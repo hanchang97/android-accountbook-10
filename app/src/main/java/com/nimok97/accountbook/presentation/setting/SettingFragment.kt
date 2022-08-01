@@ -45,7 +45,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
-    private val settingViewModel: SettingViewModel by viewModels()
+    private val settingViewModel: SettingViewModel by activityViewModels()
+    //private val settingViewModel: SettingViewModel by viewModels()
+    // viewModels() 로 설정한 경우 다른 탭으로 갔다가 다시 설정 탭으로 왔을 때 viewModelScope.launch 내부 호출이 되지 않았음
+    // why???
     private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -96,6 +99,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun initView() {
+        printLog("SettingFragment / initView Called")
         settingViewModel.getAllCategory()
         settingViewModel.getAllMethod()
 

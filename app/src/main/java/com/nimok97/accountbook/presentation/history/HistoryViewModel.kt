@@ -38,7 +38,9 @@ class HistoryViewModel @Inject constructor(
     }
 
     fun getHistoryItemList(year: Int, month: Int) {
+        printLog("getHistoryItemList Called 1")
         viewModelScope.launch(Dispatchers.IO) {
+            printLog("getHistoryItemList Called 2")
             val result = getAllHistoryByYearAndMonthUseCase.getAllHistoryByYearAndMonth(year, month)
             when {
                 result.isSuccess -> {

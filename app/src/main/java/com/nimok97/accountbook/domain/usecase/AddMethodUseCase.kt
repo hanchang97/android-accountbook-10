@@ -7,7 +7,7 @@ import com.nimok97.accountbook.domain.repository.MethodRepository
 class AddMethodUseCase(
     private val methodRepository: MethodRepository
 ) {
-    suspend fun addMethod(methodDao: MethodDao) {
+    suspend operator fun invoke(methodDao: MethodDao): Result<Long> {
         val result = methodRepository.addMethod(methodDao)
         when {
             result.isSuccess -> {
@@ -17,5 +17,6 @@ class AddMethodUseCase(
                 printLog("add method fail")
             }
         }
+        return result
     }
 }
