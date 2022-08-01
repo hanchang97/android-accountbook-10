@@ -20,4 +20,8 @@ class MethodRepositoryImpl(
     override suspend fun getMethodById(methodId: Int): Result<Method> {
         return accountBookDataSource.getMethodById(methodId)
     }
+
+    override suspend fun checkMethodExistenceByContent(content: String): Result<Boolean> {
+        return accountBookDataSource.checkMethodExistenceByContent(content)
+    }
 }

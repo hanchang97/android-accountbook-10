@@ -13,6 +13,7 @@ import com.nimok97.accountbook.domain.usecase.GetAllCategoryUseCase
 import com.nimok97.accountbook.domain.usecase.GetAllMethodUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -69,12 +70,14 @@ class SettingViewModel @Inject constructor(
 
     fun addMethod(methodDao: MethodDao) {
         viewModelScope.launch(Dispatchers.IO) {
-            addMethodUseCase.addMethod(methodDao)
+            val result = addMethodUseCase(methodDao)
         }
     }
 
     fun getAllMethod() {
+        printLog("getAllMethod Called1")
         viewModelScope.launch(Dispatchers.IO) {
+            printLog("getAllMethod Called2")
             val result = getAllMethodUseCase()
             when {
                 result.isSuccess -> {
@@ -83,6 +86,7 @@ class SettingViewModel @Inject constructor(
                         it.forEach {
                             printLog("$it")
                         }
+
                         _methodListFlow.value = it
                     }
                 }
@@ -91,5 +95,10 @@ class SettingViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        printLog("setting viewmodel onCleared")
     }
 }

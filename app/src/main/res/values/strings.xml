@@ -7,4 +7,5 @@
 
     <string name="content_price">%s원</string>
     <string name="header_date">%d월 %d일 %s</string>
+    <string name="method_content_description">이름</string>
 </resources>
