@@ -178,6 +178,31 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
+    suspend fun checkCategoryExistenceByContent(content: String): Result<Boolean> { // 결제 수단 추가 시 중복체크 위함
+        runCatching {
+            var db = dbHelper.readableDatabase
+            val columns = arrayOf(
+                CategoryDBStructure.COLUMN_CONTENT
+            )
+            val selection = "${CategoryDBStructure.COLUMN_CONTENT} = ?"
+            val selectionArgs = arrayOf(content)
+            val cursor = db.query(
+                CategoryDBStructure.TABLE_NAME, columns, selection, selectionArgs,
+                null, null, null
+            )
+            var count = 0
+            while (cursor.moveToNext()) {
+                count++
+            }
+            count != 0
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
+    }
+
     suspend fun updateCategory() {
 
     }

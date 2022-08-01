@@ -72,4 +72,8 @@ class UseCaseModule {
     fun provideCheckMethodExistenceByContentUseCase(methodRepository: MethodRepository) =
         CheckMethodExistenceByContentUseCase(methodRepository)
 
+    @Singleton
+    @Provides
+    fun provideCheckCategoryExistenceByContentUseCase(categoryRepository: CategoryRepository) =
+        CheckCategoryExistenceByContentUseCase(categoryRepository)
 }

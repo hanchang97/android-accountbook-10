@@ -20,4 +20,8 @@ class CategoryRepositoryImpl(
     override suspend fun getCategoryById(categoryId: Int): Result<Category> {
         return accountBookDataSource.getCategoryById(categoryId)
     }
+
+    override suspend fun checkCategoryExistenceByContent(content: String): Result<Boolean> {
+        return accountBookDataSource.checkCategoryExistenceByContent(content)
+    }
 }
