@@ -31,6 +31,8 @@ class HistoryViewModel @Inject constructor(
     private val _historyItemListFlow = MutableStateFlow<List<HistoryItem>>(emptyList())
     val historyItemListFlow: StateFlow<List<HistoryItem>> = _historyItemListFlow
 
+    var historyItemList = mutableListOf<HistoryItem>()
+
     fun addHistory(historyDao: HistoryDao) {
         viewModelScope.launch(Dispatchers.IO) {
             addHistoryUseCase.addHistory(historyDao)
@@ -38,9 +40,7 @@ class HistoryViewModel @Inject constructor(
     }
 
     fun getHistoryItemList(year: Int, month: Int) {
-        printLog("getHistoryItemList Called 1")
         viewModelScope.launch(Dispatchers.IO) {
-            printLog("getHistoryItemList Called 2")
             val result = getAllHistoryByYearAndMonthUseCase.getAllHistoryByYearAndMonth(year, month)
             when {
                 result.isSuccess -> {
@@ -81,6 +81,7 @@ class HistoryViewModel @Inject constructor(
                                 printLog("$it")
                             }
 
+                            historyItemList = tempList
                             convertHistoryItemList(tempList)
                         }
                     }
