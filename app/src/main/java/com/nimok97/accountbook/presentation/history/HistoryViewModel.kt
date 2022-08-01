@@ -94,6 +94,9 @@ class HistoryViewModel @Inject constructor(
 
     suspend fun convertHistoryItemList(tempList: MutableList<HistoryItem>) {
         val historyItemList = mutableListOf<HistoryItem>()
+        var sumIncome = 0
+        var sumExpenditure = 0
+        var headerInx = 0
         tempList.forEachIndexed { index, historyItem ->
             if (index == 0) {
                 historyItemList.add(HistoryItem("header", historyItem.history))
@@ -109,9 +112,22 @@ class HistoryViewModel @Inject constructor(
                         isLastItem = true
                     )
                 )
+
+                when (historyItem.history!!.type) {
+                    0 -> sumIncome += historyItem.history!!.amount
+                    else -> sumExpenditure += historyItem.history!!.amount
+                }
+
+                historyItemList.get(headerInx).income = sumIncome
+                historyItemList.get(headerInx).expenditure = sumExpenditure
             } else {
                 val curDay = historyItem.history!!.dayNum
                 val nextDay = tempList[index + 1].history!!.dayNum
+
+                when (historyItem.history!!.type) {
+                    0 -> sumIncome += historyItem.history!!.amount
+                    else -> sumExpenditure += historyItem.history!!.amount
+                }
 
                 if (curDay == nextDay) {
                     printLog("$curDay $nextDay")
@@ -123,7 +139,14 @@ class HistoryViewModel @Inject constructor(
                             historyItem.method, true
                         )
                     )
+
+                    historyItemList.get(headerInx).income = sumIncome
+                    historyItemList.get(headerInx).expenditure = sumExpenditure
+                    sumIncome = 0
+                    sumExpenditure = 0
+
                     historyItemList.add(HistoryItem("header", tempList[index + 1].history))
+                    headerInx = historyItemList.size - 1
                 }
             }
         }
@@ -133,7 +156,7 @@ class HistoryViewModel @Inject constructor(
             printLog("$it")
         }
 
-        withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main) {
             _historyItemListFlow.value = historyItemList
         }
     }

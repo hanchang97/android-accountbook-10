@@ -7,5 +7,7 @@ data class HistoryItem(
     var method: Method? = null,
     var isLastItem: Boolean? = false,
     var isCheckVisible: Boolean? = false,
-    var isChecked: Boolean? = false
+    var isChecked: Boolean? = false,
+    var income: Int? = 0,
+    var expenditure: Int? = 0
 )
