@@ -7,4 +7,5 @@ interface MethodRepository {
     suspend fun addMethod(methodDao: MethodDao): Result<Long>
     suspend fun getAllMethod(): Result<List<Method>>
     suspend fun getMethodById(methodId: Int): Result<Method>
+    suspend fun checkMethodExistenceByContent(content: String): Result<Boolean>
 }

@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     private fun collectData() {
         collectFabCliked()
         collectSettingFragmentEvent()
-        collectMethodToSettingEvent()
+        collectBackEventInMethodFragment()
     }
 
     private fun collectFabCliked() {
@@ -125,10 +125,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun collectMethodToSettingEvent(){
+    private fun collectBackEventInMethodFragment(){
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
-                mainViewModel.backToSettingFragmentEvent.collect {
+                mainViewModel.backEventInMethodFragment.collect {
                     if(it){
                         printLog("onback")
                         onBackPressed()

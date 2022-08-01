@@ -67,4 +67,9 @@ class UseCaseModule {
             getMethodByIdUseCase
         )
 
+    @Singleton
+    @Provides
+    fun provideCheckMethodExistenceByContentUseCase(methodRepository: MethodRepository) =
+        CheckMethodExistenceByContentUseCase(methodRepository)
+
 }

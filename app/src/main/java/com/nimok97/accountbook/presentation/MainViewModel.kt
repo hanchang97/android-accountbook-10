@@ -16,8 +16,8 @@ class MainViewModel @Inject constructor(): ViewModel() {
     private val _moveToMethodFragmentEvent = MutableSharedFlow<Boolean>()
     val moveToMethodFragmentEvent = _moveToMethodFragmentEvent.asSharedFlow()
 
-    private val _backToSettingFragmentEvent = MutableSharedFlow<Boolean>()
-    val backToSettingFragmentEvent = _backToSettingFragmentEvent.asSharedFlow()
+    private val _backEventInMethodFragment = MutableSharedFlow<Boolean>()
+    val backEventInMethodFragment = _backEventInMethodFragment.asSharedFlow()
 
     fun fabClick(){
         viewModelScope.launch {
@@ -31,9 +31,9 @@ class MainViewModel @Inject constructor(): ViewModel() {
         }
     }
 
-    fun backToSettingFragment(){
+    fun pressBackInMethodFragment(){
         viewModelScope.launch {
-            _backToSettingFragmentEvent.emit(true)
+            _backEventInMethodFragment.emit(true)
         }
     }
 

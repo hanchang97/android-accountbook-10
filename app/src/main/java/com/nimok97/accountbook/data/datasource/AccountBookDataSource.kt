@@ -253,6 +253,26 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
+    suspend fun checkMethodExistenceByContent(content: String): Result<Boolean> { // 결제 수단 추가 시 중복체크 위함
+        runCatching {
+            var db = dbHelper.readableDatabase
+            val cursor = db.rawQuery(
+                "SELECT * FROM " + MethodDBStructure.TABLE_NAME +
+                        " WHERE ${MethodDBStructure.COLUMN_CONTENT} == $content ", null
+            )
+            var count = 0
+            while (cursor.moveToNext()) {
+                count++
+            }
+            count != 0
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
+    }
+
     suspend fun updateMethod() {
 
     }
