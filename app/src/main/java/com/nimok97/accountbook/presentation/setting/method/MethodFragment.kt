@@ -130,9 +130,4 @@ class MethodFragment : Fragment() {
             mainViewModel.pressBackInMethodFragment()
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        printLog("MethodFragment / onDestroyView")
-    }
 }

@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity() {
         collectFabCliked()
         collectSettingFragmentEvent()
         collectBackEventInMethodFragment()
+        collectBackButtonInAppBarPressed()
     }
 
     private fun collectFabCliked() {
@@ -131,8 +132,9 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToExpenditureCategoryFragmentEvent.collect {
                     if (it) {
-                        FragmentStackManager.pushStack(3, expenditureCategoryFragment)
-                        changeFragment(expenditureCategoryFragment)
+                        val expenditureCategoryFragmentTest = ExpenditureCategoryFragment()
+                        FragmentStackManager.pushStack(3, expenditureCategoryFragmentTest)
+                        changeFragment(expenditureCategoryFragmentTest)
                     }
                 }
             }
@@ -143,6 +145,19 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.backEventInMethodFragment.collect {
+                    if (it) {
+                        printLog("onback")
+                        onBackPressed()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectBackButtonInAppBarPressed() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.backButtonPressedEvent.collect {
                     if (it) {
                         printLog("onback")
                         onBackPressed()

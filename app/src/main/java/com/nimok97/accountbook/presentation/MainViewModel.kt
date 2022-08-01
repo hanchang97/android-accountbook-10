@@ -49,4 +49,10 @@ class MainViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun pressBackButtonInAppBar() {
+        viewModelScope.launch {
+            _backButtonPressedEvent.emit(true)
+        }
+    }
+
 }

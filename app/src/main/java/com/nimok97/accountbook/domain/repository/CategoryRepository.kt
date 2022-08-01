@@ -7,4 +7,5 @@ interface CategoryRepository {
     suspend fun addCategory(categoryDao: CategoryDao): Result<Long>
     suspend fun getAllCategory(): Result<List<Category>>
     suspend fun getCategoryById(categoryId: Int): Result<Category>
+    suspend fun checkCategoryExistenceByContent(content: String): Result<Boolean>
 }

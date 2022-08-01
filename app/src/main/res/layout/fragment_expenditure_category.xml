@@ -4,7 +4,9 @@
 
     <data>
 
-
+        <variable
+            name="expenditureCategoryViewModel"
+            type="com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCategoryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -118,6 +120,7 @@
             android:backgroundTint="@color/primary_yellow_50"
             android:enabled="false"
             android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:onClick="@{() -> expenditureCategoryViewModel.checkCategoryExistenceByContent()}"
             android:text="등록하기"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
