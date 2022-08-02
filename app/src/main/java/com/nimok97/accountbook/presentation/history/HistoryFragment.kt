@@ -35,7 +35,7 @@ class HistoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        printLog("HistoryFragment / onCreateView")
+        printLog("${this.javaClass.simpleName} / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_history, container, false)
         binding.mainViewModel = mainViewModel
         binding.historyViewModel = historyViewModel

@@ -56,7 +56,7 @@ class SettingFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        printLog("SettingFragment / onCreateView")
+        printLog("${this.javaClass.simpleName} / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false)
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = this.viewLifecycleOwner
@@ -65,7 +65,7 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        printLog("SettingFragment / onViewCreated")
+        printLog("${this.javaClass.simpleName} / onViewCreated")
         //saveDefaultData()
 
         initView()

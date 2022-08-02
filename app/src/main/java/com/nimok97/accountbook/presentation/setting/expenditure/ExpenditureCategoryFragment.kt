@@ -53,7 +53,7 @@ class ExpenditureCategoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        printLog("ExpenditureCategoryFragment / onCreateView")
+        printLog("${this.javaClass.simpleName} / onCreateView")
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_expenditure_category,

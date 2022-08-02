@@ -35,7 +35,7 @@ class MethodFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        printLog("MethodFragment / onCreateView")
+        printLog("${this.javaClass.simpleName} / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_method, container, false)
         binding.methodViewModel = methodViewModel
         binding.lifecycleOwner = this.viewLifecycleOwner
@@ -44,7 +44,7 @@ class MethodFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        printLog("MethodFragment / onViewCreated")
+        printLog("${this.javaClass.simpleName} / onViewCreated")
 
         initView()
         collectData()
@@ -60,20 +60,15 @@ class MethodFragment : Fragment() {
     }
 
     private fun setEditText() {
-        // TextWatcher 설정하기
         binding.etContent.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 printLog("${s.toString().isEmpty()}")
                 methodViewModel.checkContentEmpty(s.toString())
             }
 
-            override fun afterTextChanged(s: Editable?) {
-
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
 
@@ -125,7 +120,7 @@ class MethodFragment : Fragment() {
 
     inner class LeftListener : CustomAppBar.LeftImageClickListener {
         override fun clickLeft(view: View) {
-            printLog("MethodFragment/ back clicked")
+            printLog("${this.javaClass.simpleName}/ back clicked")
             binding.etContent.setText("")
             mainViewModel.pressBackInMethodFragment()
         }
