@@ -1,16 +1,14 @@
 package com.nimok97.accountbook.presentation.history.manage.add
 
-import android.app.DatePickerDialog
-import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -26,9 +24,10 @@ import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentAddHistoryBinding
 import com.nimok97.accountbook.domain.model.Category
 import com.nimok97.accountbook.domain.model.Method
-import com.nimok97.accountbook.presentation.history.HistoryViewModel
+import com.nimok97.accountbook.presentation.MainViewModel
 import com.nimok97.accountbook.presentation.history.manage.adapter.CustomCategorySpinnerAdapter
 import com.nimok97.accountbook.presentation.history.manage.adapter.CustomSpinnerAdapter
+import com.nimok97.accountbook.presentation.util.CustomAppBar
 import com.nimok97.accountbook.presentation.util.calculateDayString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -40,7 +39,7 @@ import java.util.*
 class AddHistoryFragment : Fragment() {
 
     private lateinit var binding: FragmentAddHistoryBinding
-    private val historyViewModel: HistoryViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val addHistoryViewModel: AddHistoryViewModel by viewModels()
 
     val datePicker =
@@ -72,10 +71,15 @@ class AddHistoryFragment : Fragment() {
         addHistoryViewModel.getAllMethod()
         addHistoryViewModel.getAllCategory()
 
+        setAppBar()
         setDateListener()
         setMethodSpinner()
         setAmountListener()
         setContentListener()
+    }
+
+    private fun setAppBar() {
+        binding.customAppBar.setOnLeftImageClickListener(LeftListener())
     }
 
     private fun setDateListener() {
@@ -269,6 +273,7 @@ class AddHistoryFragment : Fragment() {
         collectSelectedType()
         collectDateCliked()
         collectButtonActivate()
+        collectAddHistorySuccess()
     }
 
     private fun collectSelectedType() {
@@ -278,6 +283,9 @@ class AddHistoryFragment : Fragment() {
                     binding.tvMethodDescription.isVisible = !it
                     binding.spinnerMethod.isVisible = !it
                     binding.viewDividerUnderMethodSpinner.isVisible = !it
+
+                    binding.etAmount.setText("")
+                    binding.etContent.setText("")
 
                     if (it) setIncomeCategorySpinner()
                     else setExpenditureCategorySpinner()
@@ -320,4 +328,28 @@ class AddHistoryFragment : Fragment() {
         }
     }
 
+    private fun collectAddHistorySuccess() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addHistoryViewModel.addHistorySuccessful.collect {
+                    if (it) {
+                        Toast.makeText(requireContext(), "내역이 추가되었습니다", Toast.LENGTH_SHORT)
+                            .show()
+                        mainViewModel.pressBackInMethodFragment()
+                    } else {
+                        Toast.makeText(requireContext(), "내역 추가에 실패했습니다", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        }
+    }
+
+    inner class LeftListener : CustomAppBar.LeftImageClickListener {
+        override fun clickLeft(view: View) {
+            printLog("${this.javaClass.simpleName}/ back clicked")
+            binding.etContent.setText("")
+            mainViewModel.pressBackInMethodFragment()
+        }
+    }
 }

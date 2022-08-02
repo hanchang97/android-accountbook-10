@@ -7,7 +7,7 @@ import com.nimok97.accountbook.domain.repository.HistoryRepository
 class AddHistoryUseCase(
     private val historyRepository: HistoryRepository
 ) {
-    suspend fun addHistory(historyDao: HistoryDao) {
+    suspend fun addHistory(historyDao: HistoryDao): Result<Long> {
         val result = historyRepository.addHistory(historyDao)
         when {
             result.isSuccess -> {
@@ -17,5 +17,6 @@ class AddHistoryUseCase(
                 printLog("add history fail")
             }
         }
+        return result
     }
 }

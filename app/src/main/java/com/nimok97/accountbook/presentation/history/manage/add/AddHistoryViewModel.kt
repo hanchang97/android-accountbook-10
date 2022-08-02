@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nimok97.accountbook.common.defaultDateString
 import com.nimok97.accountbook.common.printLog
+import com.nimok97.accountbook.data.dao.HistoryDao
 import com.nimok97.accountbook.domain.model.Category
 import com.nimok97.accountbook.domain.model.Method
+import com.nimok97.accountbook.domain.usecase.AddHistoryUseCase
 import com.nimok97.accountbook.domain.usecase.GetAllCategoryUseCase
 import com.nimok97.accountbook.domain.usecase.GetAllMethodUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,8 +22,9 @@ import javax.inject.Inject
 @HiltViewModel
 class AddHistoryViewModel @Inject constructor(
     private val getAllCategoryUseCase: GetAllCategoryUseCase,
-    private val getAllMethodUseCase: GetAllMethodUseCase
-): ViewModel() {
+    private val getAllMethodUseCase: GetAllMethodUseCase,
+    private val addHistoryUseCase: AddHistoryUseCase
+) : ViewModel() {
 
     var categoryType = 0 // 0 = 수입, 1 = 지출
     var selectedMethodId = -1
@@ -57,31 +60,34 @@ class AddHistoryViewModel @Inject constructor(
     private val _buttonActiveFlow = MutableStateFlow<Boolean>(false)
     val buttonActiveFlow: StateFlow<Boolean> = _buttonActiveFlow
 
-    fun selectIncome(){
+    private val _addHistorySuccessful = MutableSharedFlow<Boolean>()
+    val addHistorySuccessful = _addHistorySuccessful.asSharedFlow()
+
+    fun selectIncome() {
         _incomeCheckedFlow.value = true
         _expenditureCheckedFlow.value = false
         categoryType = 0
         clearData()
     }
 
-    fun selectExpenditure(){
+    fun selectExpenditure() {
         _incomeCheckedFlow.value = false
         _expenditureCheckedFlow.value = true
         categoryType = 1
         clearData()
     }
 
-    fun dateClick(){
+    fun dateClick() {
         viewModelScope.launch {
             _dateClickedEvent.emit(true)
         }
     }
 
-    fun setDateString(){
+    fun setDateString() {
         _dateStringFlow.value = "$year. $month. $dayNum ${dayStr}요일"
     }
 
-    fun clearData(){
+    fun clearData() {
         selectedMethodId = -1
         selectedCategoryId = -1
         year = 0
@@ -94,8 +100,9 @@ class AddHistoryViewModel @Inject constructor(
         checkData()
     }
 
-    fun checkData(){
-        _buttonActiveFlow.value = selectedCategoryId >= 1 && _dateStringFlow.value != defaultDateString && amount > 0
+    fun checkData() {
+        _buttonActiveFlow.value =
+            selectedCategoryId >= 1 && _dateStringFlow.value != defaultDateString && amount > 0
     }
 
     fun getAllMethod() {
@@ -138,6 +145,33 @@ class AddHistoryViewModel @Inject constructor(
                 }
                 result.isFailure -> {
                     printLog("AddHistoryViewModel/ get all category fail")
+                }
+            }
+        }
+    }
+
+    fun addHistory() {
+        val historyDao = HistoryDao(
+            categoryType,
+            year,
+            month,
+            dayNum,
+            dayStr,
+            amount,
+            content,
+            selectedMethodId,
+            selectedCategoryId
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            printLog("$historyDao")
+            val result = addHistoryUseCase.addHistory(historyDao)
+            when {
+                result.isSuccess -> {
+                    _addHistorySuccessful.emit(true)
+                }
+                result.isFailure -> {
+                    _addHistorySuccessful.emit(false)
                 }
             }
         }

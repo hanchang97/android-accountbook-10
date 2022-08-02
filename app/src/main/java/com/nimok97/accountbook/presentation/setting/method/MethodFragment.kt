@@ -61,18 +61,14 @@ class MethodFragment : Fragment() {
 
     private fun setEditText() {
         binding.etContent.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 printLog("${s.toString().isEmpty()}")
                 methodViewModel.checkContentEmpty(s.toString())
             }
 
-            override fun afterTextChanged(s: Editable?) {
-
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
 
@@ -124,7 +120,7 @@ class MethodFragment : Fragment() {
 
     inner class LeftListener : CustomAppBar.LeftImageClickListener {
         override fun clickLeft(view: View) {
-            printLog("MethodFragment/ back clicked")
+            printLog("${this.javaClass.simpleName}/ back clicked")
             binding.etContent.setText("")
             mainViewModel.pressBackInMethodFragment()
         }
