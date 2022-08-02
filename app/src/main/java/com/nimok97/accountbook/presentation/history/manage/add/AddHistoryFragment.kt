@@ -1,11 +1,17 @@
 package com.nimok97.accountbook.presentation.history.manage.add
 
+import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -14,6 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentAddHistoryBinding
@@ -22,8 +29,12 @@ import com.nimok97.accountbook.domain.model.Method
 import com.nimok97.accountbook.presentation.history.HistoryViewModel
 import com.nimok97.accountbook.presentation.history.manage.adapter.CustomCategorySpinnerAdapter
 import com.nimok97.accountbook.presentation.history.manage.adapter.CustomSpinnerAdapter
+import com.nimok97.accountbook.presentation.util.calculateDayString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 @AndroidEntryPoint
 class AddHistoryFragment : Fragment() {
@@ -31,6 +42,11 @@ class AddHistoryFragment : Fragment() {
     private lateinit var binding: FragmentAddHistoryBinding
     private val historyViewModel: HistoryViewModel by activityViewModels()
     private val addHistoryViewModel: AddHistoryViewModel by viewModels()
+
+    val datePicker =
+        MaterialDatePicker.Builder.datePicker()
+            .setTitleText("날짜를 선택하세요")
+            .build()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +72,64 @@ class AddHistoryFragment : Fragment() {
         addHistoryViewModel.getAllMethod()
         addHistoryViewModel.getAllCategory()
 
+        setDateListener()
         setMethodSpinner()
+        setAmountListener()
+        setContentListener()
+    }
+
+    private fun setDateListener() {
+        datePicker.addOnPositiveButtonClickListener {
+            val dateStr = convertLongToDate(it)
+            val dateStrList = dateStr.split('-')
+
+            addHistoryViewModel.year = dateStrList[0].toInt()
+            addHistoryViewModel.month = dateStrList[1].toInt()
+            addHistoryViewModel.dayNum = dateStrList[2].toInt()
+            addHistoryViewModel.dayStr = calculateDayString(
+                addHistoryViewModel.year,
+                addHistoryViewModel.month,
+                addHistoryViewModel.dayNum
+            )
+            addHistoryViewModel.setDateString()
+            addHistoryViewModel.checkData()
+        }
+    }
+
+    private fun convertLongToDate(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA)
+
+        return format.format(date)
+    }
+
+    private fun setAmountListener() {
+        binding.etAmount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.toString().isNotEmpty()) {
+                    val amount = s.toString().toInt()
+                    addHistoryViewModel.amount = amount
+                    addHistoryViewModel.checkData()
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun setContentListener() {
+        binding.etContent.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                addHistoryViewModel.content = s.toString()
+                addHistoryViewModel.checkData()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     private fun setMethodSpinner() {
@@ -132,6 +205,7 @@ class AddHistoryFragment : Fragment() {
                                         categorySpinnerList[position].content
                                     addHistoryViewModel.selectedCategoryId =
                                         categorySpinnerList[position].id
+                                    addHistoryViewModel.checkData()
                                 }
                                 // 뷰모델에서 버튼 활성화 여부 체크 하기
                             }
@@ -176,6 +250,7 @@ class AddHistoryFragment : Fragment() {
                                         categorySpinnerList[position].content
                                     addHistoryViewModel.selectedCategoryId =
                                         categorySpinnerList[position].id
+                                    addHistoryViewModel.checkData()
                                 }
                                 // 뷰모델에서 버튼 활성화 여부 체크 하기
                             }
@@ -192,6 +267,8 @@ class AddHistoryFragment : Fragment() {
 
     private fun collectData() {
         collectSelectedType()
+        collectDateCliked()
+        collectButtonActivate()
     }
 
     private fun collectSelectedType() {
@@ -208,4 +285,39 @@ class AddHistoryFragment : Fragment() {
             }
         }
     }
+
+    private fun collectDateCliked() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addHistoryViewModel.dateClickedEvent.collect {
+                    if (it) {
+                        datePicker.show(childFragmentManager, "date")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectButtonActivate() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addHistoryViewModel.buttonActiveFlow.collect {
+                    changeButtonState(it)
+                }
+            }
+        }
+    }
+
+    private fun changeButtonState(enable: Boolean) {
+        if (enable) {
+            binding.btnAdd.isEnabled = true
+            binding.btnAdd.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.primary_yellow)
+        } else {
+            binding.btnAdd.isEnabled = false
+            binding.btnAdd.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.primary_yellow_50)
+        }
+    }
+
 }

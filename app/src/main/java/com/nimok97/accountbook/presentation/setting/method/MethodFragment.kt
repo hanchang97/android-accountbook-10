@@ -60,7 +60,6 @@ class MethodFragment : Fragment() {
     }
 
     private fun setEditText() {
-        // TextWatcher 설정하기
         binding.etContent.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 

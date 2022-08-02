@@ -2,6 +2,7 @@ package com.nimok97.accountbook.presentation.history.manage.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nimok97.accountbook.common.defaultDateString
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.domain.model.Category
 import com.nimok97.accountbook.domain.model.Method
@@ -9,8 +10,10 @@ import com.nimok97.accountbook.domain.usecase.GetAllCategoryUseCase
 import com.nimok97.accountbook.domain.usecase.GetAllMethodUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,6 +48,12 @@ class AddHistoryViewModel @Inject constructor(
     private val _categoryExpenditureListFlow = MutableStateFlow<List<Category>>(emptyList())
     val categoryExpenditureListFlow: StateFlow<List<Category>> = _categoryExpenditureListFlow
 
+    private val _dateClickedEvent = MutableSharedFlow<Boolean>()
+    val dateClickedEvent = _dateClickedEvent.asSharedFlow()
+
+    private val _dateStringFlow = MutableStateFlow<String>(defaultDateString)
+    val dateStringFlow: StateFlow<String> = _dateStringFlow
+
     private val _buttonActiveFlow = MutableStateFlow<Boolean>(false)
     val buttonActiveFlow: StateFlow<Boolean> = _buttonActiveFlow
 
@@ -62,6 +71,16 @@ class AddHistoryViewModel @Inject constructor(
         clearData()
     }
 
+    fun dateClick(){
+        viewModelScope.launch {
+            _dateClickedEvent.emit(true)
+        }
+    }
+
+    fun setDateString(){
+        _dateStringFlow.value = "$year. $month. $dayNum ${dayStr}요일"
+    }
+
     fun clearData(){
         selectedMethodId = -1
         selectedCategoryId = -1
@@ -71,6 +90,12 @@ class AddHistoryViewModel @Inject constructor(
         dayStr = ""
         amount = 0
         content = "미입력"
+        _dateStringFlow.value = defaultDateString
+        checkData()
+    }
+
+    fun checkData(){
+        _buttonActiveFlow.value = selectedCategoryId >= 1 && _dateStringFlow.value != defaultDateString && amount > 0
     }
 
     fun getAllMethod() {
