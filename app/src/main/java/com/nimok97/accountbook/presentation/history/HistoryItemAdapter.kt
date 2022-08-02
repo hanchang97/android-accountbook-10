@@ -23,6 +23,8 @@ class HistoryItemAdapter : ListAdapter<HistoryItem, RecyclerView.ViewHolder>(His
         RecyclerView.ViewHolder(binding.root) {
         fun bind(historyItem: HistoryItem) {
             binding.history = historyItem.history
+            binding.tvAmountIncome.text = historyItem.income.toString()
+            binding.tvAmountExpenditure.text = historyItem.expenditure.toString()
         }
     }
 

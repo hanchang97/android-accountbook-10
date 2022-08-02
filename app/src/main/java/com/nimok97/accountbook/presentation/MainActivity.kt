@@ -20,6 +20,8 @@ import com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCateg
 import com.nimok97.accountbook.presentation.setting.method.MethodFragment
 import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
 import com.nimok97.accountbook.presentation.util.FragmentStackManager
+import com.nimok97.accountbook.presentation.util.calculateCurrentMonth
+import com.nimok97.accountbook.presentation.util.calculateCurrentYear
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -52,7 +54,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun initView() {
         setBottomNavigation()
+        setCurrentDate()
         changeTab(0, historyFragment, R.id.fragment_history)
+    }
+
+    private fun setCurrentDate(){
+        calculateCurrentYear()
+        calculateCurrentMonth()
     }
 
     private fun setBottomNavigation() {

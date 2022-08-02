@@ -111,16 +111,16 @@ class ExpenditureCategoryFragment : Fragment() {
     }
 
     private fun collectData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 expenditureCategoryViewModel.contentFlow.collect {
                     changeButtonState(it)
                 }
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 expenditureCategoryViewModel.contentAlreadyExist.collect {
                     if (it) Toast.makeText(requireContext(), "이미 존재하는 카테고리 입니다", Toast.LENGTH_SHORT)
                         .show()
@@ -128,8 +128,8 @@ class ExpenditureCategoryFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 expenditureCategoryViewModel.addCategorySuccessful.collect {
                     if (it) {
                         Toast.makeText(requireContext(), "지출 카테고리가 추가되었습니다", Toast.LENGTH_SHORT)

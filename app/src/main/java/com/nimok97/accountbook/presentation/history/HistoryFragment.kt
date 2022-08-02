@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,7 +19,6 @@ import com.nimok97.accountbook.databinding.FragmentHistoryBinding
 import com.nimok97.accountbook.presentation.MainViewModel
 import com.nimok97.accountbook.presentation.util.CustomAppBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -38,6 +38,7 @@ class HistoryFragment : Fragment() {
         printLog("HistoryFragment / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_history, container, false)
         binding.mainViewModel = mainViewModel
+        binding.historyViewModel = historyViewModel
         binding.lifecycleOwner = this.viewLifecycleOwner
         return binding.root
     }
@@ -73,7 +74,7 @@ class HistoryFragment : Fragment() {
     private fun initView() {
         setAppBar()
         setRecyclerView()
-        observeData()
+        collectData()
 
         historyViewModel.getHistoryItemList(2022, 7)
     }
@@ -92,11 +93,25 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    private fun observeData(){
+    private fun collectData(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
                 historyViewModel.historyItemListFlow.collect{
                     historyItemAdapter.submitList(it)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                historyViewModel.emptyEvent.collect{
+                    if(it) {
+                        binding.rvHistory.isVisible = false
+                        binding.tvHistoryEmpty.isVisible = true
+                    } else {
+                        binding.rvHistory.isVisible = true
+                        binding.tvHistoryEmpty.isVisible = false
+                    }
                 }
             }
         }
