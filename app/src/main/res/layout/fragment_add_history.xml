@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_start"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_end"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <com.nimok97.accountbook.presentation.util.CustomAppBar
+            android:id="@+id/customAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:leftImage="@drawable/ic_back"
+            app:showLeftButton="true"
+            app:showRightButton="false"
+            app:title="내역 등록" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_filter"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:layout_constraintDimensionRatio="328:30"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/customAppBar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_filter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_income"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintWidth_percent="0.5"
+                    tools:background="@color/primary_purple"
+                    android:background="@color/primary_purple">
+
+                    <TextView
+                        android:id="@+id/tv_income_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:fontFamily="@font/kopubworld_dotum_pro_medium"
+                        android:text="수입"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_expenditure"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintWidth_percent="0.5"
+                    tools:background="@color/primary_light_purple"
+                    android:background="@color/primary_light_purple">
+
+                    <TextView
+                        android:id="@+id/tv_expenditure_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:fontFamily="@font/kopubworld_dotum_pro_medium"
+                        android:text="지출"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tv_date_description"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_medium"
+            android:text="일자"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/cv_filter" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:text="날짜를 선택하세요"
+            android:textColor="@color/primary_light_purple"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_date_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_date_description"
+            app:layout_constraintTop_toTopOf="@id/tv_date_description" />
+
+        <View
+            android:id="@+id/view_divider_1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/primary_purple_40"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/tv_date_description" />
+
+        <TextView
+            android:id="@+id/tv_amount_description"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_medium"
+            android:text="금액"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/view_divider_1" />
+
+        <EditText
+            android:id="@+id/et_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:hint="입력하세요"
+            android:inputType="number"
+            android:maxLength="9"
+            android:textColor="@color/primary_purple"
+            android:textColorHint="@color/primary_light_purple"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_amount_description"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toEndOf="@id/tv_amount_description"
+            app:layout_constraintTop_toTopOf="@id/tv_amount_description" />
+
+        <View
+            android:id="@+id/view_divider_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/primary_purple_40"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/tv_amount_description" />
+
+        <TextView
+            android:id="@+id/tv_method_description"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_medium"
+            android:text="결제 수단"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/view_divider_2" />
+
+        <Spinner
+            android:id="@+id/spinner_method"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:background="@null"
+            android:dropDownVerticalOffset="40dp"
+            android:popupBackground="@drawable/bg_menu_spinner"
+            app:layout_constraintBottom_toBottomOf="@id/tv_method_description"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toEndOf="@id/tv_method_description"
+            app:layout_constraintTop_toTopOf="@id/tv_method_description" />
+
+        <View
+            android:id="@+id/view_divider_under_method_spinner"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/primary_purple_40"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/spinner_method" />
+
+        <TextView
+            android:id="@+id/tv_category_description"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_medium"
+            android:text="분류"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/view_divider_under_method_spinner" />
+
+        <Spinner
+            android:id="@+id/spinner_category"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:background="@null"
+            android:dropDownVerticalOffset="40dp"
+            android:popupBackground="@drawable/bg_menu_spinner"
+            app:layout_constraintBottom_toBottomOf="@id/tv_category_description"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toEndOf="@id/tv_category_description"
+            app:layout_constraintTop_toTopOf="@id/tv_category_description" />
+
+        <View
+            android:id="@+id/view_divider_under_category_spinner"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/primary_purple_40"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/spinner_category" />
+
+        <TextView
+            android:id="@+id/tv_content_description"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_medium"
+            android:text="내용"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/view_divider_under_category_spinner" />
+
+        <EditText
+            android:id="@+id/et_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:hint="입력하세요"
+            android:inputType="text"
+            android:textColor="@color/primary_purple"
+            android:textColorHint="@color/primary_light_purple"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_content_description"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toEndOf="@id/tv_content_description"
+            app:layout_constraintTop_toTopOf="@id/tv_content_description" />
+
+        <View
+            android:id="@+id/view_divider_under_content"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/primary_purple_40"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/et_content" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

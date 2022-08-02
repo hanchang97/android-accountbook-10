@@ -21,7 +21,7 @@ class StatisticsFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        printLog("StatisticsFragment / onCreateView")
+        printLog("${this.javaClass.simpleName} / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_statistics, container, false)
         return binding.root
     }

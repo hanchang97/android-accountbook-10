@@ -14,7 +14,7 @@ import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.ActivityMainBinding
 import com.nimok97.accountbook.presentation.calendar.CalendarFragment
 import com.nimok97.accountbook.presentation.history.HistoryFragment
-import com.nimok97.accountbook.presentation.history.manage.ManageHistoryFragment
+import com.nimok97.accountbook.presentation.history.manage.add.AddHistoryFragment
 import com.nimok97.accountbook.presentation.setting.SettingFragment
 import com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCategoryFragment
 import com.nimok97.accountbook.presentation.setting.method.MethodFragment
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private val statisticsFragment by lazy { StatisticsFragment() }
     private val settingFragment by lazy { SettingFragment() }
 
-    private val manageHistoryFragment by lazy { ManageHistoryFragment() }
+    // private val addHistoryFragment by lazy { AddHistoryFragment() }
 
     private val methodFragment by lazy { MethodFragment() }
     private val expenditureCategoryFragment by lazy { ExpenditureCategoryFragment() }
@@ -116,8 +116,9 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.fabClickedEvent.collect {
                     if (it) {
-                        FragmentStackManager.pushStack(0, manageHistoryFragment)
-                        changeFragment(manageHistoryFragment)
+                        val addHistoryFragment = AddHistoryFragment()
+                        FragmentStackManager.pushStack(0, addHistoryFragment)
+                        changeFragment(addHistoryFragment)
                     }
                 }
             }

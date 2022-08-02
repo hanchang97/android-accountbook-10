@@ -35,7 +35,7 @@ class MethodFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        printLog("MethodFragment / onCreateView")
+        printLog("${this.javaClass.simpleName} / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_method, container, false)
         binding.methodViewModel = methodViewModel
         binding.lifecycleOwner = this.viewLifecycleOwner
@@ -44,7 +44,7 @@ class MethodFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        printLog("MethodFragment / onViewCreated")
+        printLog("${this.javaClass.simpleName} / onViewCreated")
 
         initView()
         collectData()
