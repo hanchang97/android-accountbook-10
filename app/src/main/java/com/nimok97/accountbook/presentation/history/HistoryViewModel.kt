@@ -28,10 +28,22 @@ class HistoryViewModel @Inject constructor(
     private val _errorEvent = MutableSharedFlow<Boolean>()
     val errorEvent = _errorEvent.asSharedFlow()
 
+    private val _emptyEvent = MutableSharedFlow<Boolean>()
+    val emptyEvent = _emptyEvent.asSharedFlow()
+
     private val _historyItemListFlow = MutableStateFlow<List<HistoryItem>>(emptyList())
     val historyItemListFlow: StateFlow<List<HistoryItem>> = _historyItemListFlow
 
     var historyItemList = mutableListOf<HistoryItem>()
+
+    private val _incomeTotalFlow = MutableStateFlow<Int>(0)
+    val incomeTotalFlow: StateFlow<Int> = _incomeTotalFlow
+
+    private val _expenditureTotalFlow = MutableStateFlow<Int>(0)
+    val expenditureTotalFlow: StateFlow<Int> = _expenditureTotalFlow
+
+    private var incomeChecked = true
+    private var expenditureChecked = true
 
     fun addHistory(historyDao: HistoryDao) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -49,11 +61,19 @@ class HistoryViewModel @Inject constructor(
                         if (it.isEmpty()) {
                             printLog("수입/지출 내역이 없습니다")
                         } else {
+                            var incomeTotalTemp = 0
+                            var expenditureTotalTemp = 0
+
                             val tempList = MutableList(it.size) { HistoryItem() }
                             (it.indices).map {
                                 tempList[it].history = resultList[it]
                                 tempList[it].isLastItem = false
                                 tempList[it].viewType = "content"
+
+                                when (resultList[it].type) {
+                                    0 -> incomeTotalTemp += resultList[it].amount
+                                    else -> expenditureTotalTemp += resultList[it].amount
+                                }
 
                                 async {
                                     val category =
@@ -80,6 +100,9 @@ class HistoryViewModel @Inject constructor(
                             tempList.forEach {
                                 printLog("$it")
                             }
+
+                            _incomeTotalFlow.value = incomeTotalTemp
+                            _expenditureTotalFlow.value = expenditureTotalTemp
 
                             historyItemList = tempList
                             convertHistoryItemList(tempList)

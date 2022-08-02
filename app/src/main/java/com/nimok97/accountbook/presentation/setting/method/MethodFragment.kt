@@ -90,16 +90,16 @@ class MethodFragment : Fragment() {
     }
 
     private fun collectData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 methodViewModel.contentFlow.collect {
                     changeButtonState(it)
                 }
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 methodViewModel.contentAlreadyExist.collect {
                     if (it) Toast.makeText(requireContext(), "이미 존재하는 결제수단 입니다", Toast.LENGTH_SHORT)
                         .show()
@@ -107,8 +107,8 @@ class MethodFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 methodViewModel.addMethodSuccessful.collect {
                     if (it) {
                         Toast.makeText(requireContext(), "결제수단이 추가되었습니다", Toast.LENGTH_SHORT)

@@ -8,6 +8,11 @@
         <variable
             name="mainViewModel"
             type="com.nimok97.accountbook.presentation.MainViewModel" />
+        
+        <variable
+            name="historyViewModel"
+            type="com.nimok97.accountbook.presentation.history.HistoryViewModel" />
+        
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -68,6 +73,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:buttonTint="@color/white"
+                        android:checked="true"
+                        android:enabled="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_income_description"
                         app:layout_constraintHorizontal_chainStyle="packed"
@@ -99,7 +106,9 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/tv_income_description"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="1,822,480" />
+                        tools:text="1,822,480"
+                        totalPriceAmount="@{historyViewModel.incomeTotalFlow}"
+                        />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -116,6 +125,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:buttonTint="@color/white"
+                        android:checked="true"
+                        android:enabled="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_expenditure_description"
                         app:layout_constraintHorizontal_chainStyle="packed"
@@ -147,7 +158,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/tv_expenditure_description"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="1,822,480" />
+                        tools:text="1,822,480"
+                        totalPriceAmount="@{historyViewModel.expenditureTotalFlow}"/>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -160,7 +172,21 @@
             android:id="@+id/rv_history"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cv_filter" />
+
+        <TextView
+            android:id="@+id/tv_history_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kopubworld_dotum_pro_medium"
+            android:text="내역이 없습니다"
+            android:textColor="@color/primary_purple"
+            android:textSize="15sp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
