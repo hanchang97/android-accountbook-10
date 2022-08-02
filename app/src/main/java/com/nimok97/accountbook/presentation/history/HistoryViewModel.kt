@@ -110,7 +110,7 @@ class HistoryViewModel @Inject constructor(
                             _expenditureTotalFlow.value = expenditureTotalTemp
 
                             historyItemList = tempList
-                            convertHistoryItemList(historyItemList)
+                            filterHistoryItemList()
                         }
                     }
                 }

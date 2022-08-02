@@ -10,6 +10,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor() : ViewModel() {
+
+    var currentYear = 2022
+    var currentMonth = 1
+
     private val _fabClickedEvent = MutableSharedFlow<Boolean>()
     val fabClickedEvent = _fabClickedEvent.asSharedFlow()
 
