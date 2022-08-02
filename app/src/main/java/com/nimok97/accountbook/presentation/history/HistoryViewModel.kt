@@ -9,6 +9,8 @@ import com.nimok97.accountbook.domain.usecase.AddHistoryUseCase
 import com.nimok97.accountbook.domain.usecase.GetAllHistoryByYearAndMonthUseCase
 import com.nimok97.accountbook.domain.usecase.GetCategoryByIdUseCase
 import com.nimok97.accountbook.domain.usecase.GetMethodByIdUseCase
+import com.nimok97.accountbook.presentation.util.CATEGORY_EXPENDITURE
+import com.nimok97.accountbook.presentation.util.CATEGORY_INCOME
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,8 +44,11 @@ class HistoryViewModel @Inject constructor(
     private val _expenditureTotalFlow = MutableStateFlow<Int>(0)
     val expenditureTotalFlow: StateFlow<Int> = _expenditureTotalFlow
 
-    private var incomeChecked = true
-    private var expenditureChecked = true
+    private val _incomeCheckedFlow = MutableStateFlow<Boolean>(true)
+    val incomeCheckedFlow: StateFlow<Boolean> = _incomeCheckedFlow
+
+    private val _expenditureCheckedFlow = MutableStateFlow<Boolean>(true)
+    val expenditureCheckedFlow: StateFlow<Boolean> = _expenditureCheckedFlow
 
     fun addHistory(historyDao: HistoryDao) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -105,7 +110,7 @@ class HistoryViewModel @Inject constructor(
                             _expenditureTotalFlow.value = expenditureTotalTemp
 
                             historyItemList = tempList
-                            convertHistoryItemList(tempList)
+                            convertHistoryItemList(historyItemList)
                         }
                     }
                 }
@@ -116,7 +121,38 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    suspend fun convertHistoryItemList(tempList: MutableList<HistoryItem>) {
+    fun clickIncomeFilter() {
+        viewModelScope.launch {
+            _incomeCheckedFlow.value = !_incomeCheckedFlow.value
+            filterHistoryItemList()
+        }
+    }
+
+    fun clickExpenditureFilter() {
+        viewModelScope.launch {
+            _expenditureCheckedFlow.value = !expenditureCheckedFlow.value
+            filterHistoryItemList()
+        }
+    }
+
+    suspend fun filterHistoryItemList() {
+        var filteredList = listOf<HistoryItem>()
+        if (_incomeCheckedFlow.value && _expenditureCheckedFlow.value) {
+            filteredList = historyItemList
+            convertHistoryItemList(filteredList)
+        } else if (_incomeCheckedFlow.value && !_expenditureCheckedFlow.value) {
+            filteredList = historyItemList.filter { it.history!!.type == CATEGORY_INCOME }
+            convertHistoryItemList(filteredList)
+        } else if (!_incomeCheckedFlow.value && _expenditureCheckedFlow.value) {
+            filteredList = historyItemList.filter { it.history!!.type == CATEGORY_EXPENDITURE }
+            convertHistoryItemList(filteredList)
+        } else {
+            _emptyEvent.emit(true)
+        }
+    }
+
+    suspend fun convertHistoryItemList(tempList: List<HistoryItem>) {
+        _emptyEvent.emit(false)
         val historyItemList = mutableListOf<HistoryItem>()
         var sumIncome = 0
         var sumExpenditure = 0

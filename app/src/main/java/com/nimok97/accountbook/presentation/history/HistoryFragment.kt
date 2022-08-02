@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -97,6 +98,20 @@ class HistoryFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
                 historyViewModel.historyItemListFlow.collect{
                     historyItemAdapter.submitList(it)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                historyViewModel.emptyEvent.collect{
+                    if(it) {
+                        binding.rvHistory.isVisible = false
+                        binding.tvHistoryEmpty.isVisible = true
+                    } else {
+                        binding.rvHistory.isVisible = true
+                        binding.tvHistoryEmpty.isVisible = false
+                    }
                 }
             }
         }

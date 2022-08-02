@@ -8,11 +8,11 @@
         <variable
             name="mainViewModel"
             type="com.nimok97.accountbook.presentation.MainViewModel" />
-        
+
         <variable
             name="historyViewModel"
             type="com.nimok97.accountbook.presentation.history.HistoryViewModel" />
-        
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -62,19 +62,22 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_income"
+                    checkedState="@{historyViewModel.incomeCheckedFlow}"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="@color/primary_purple"
+                    android:onClick="@{() -> historyViewModel.clickIncomeFilter()}"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintWidth_percent="0.5">
+                    app:layout_constraintWidth_percent="0.5"
+                    tools:background="@color/primary_purple">
 
                     <CheckBox
                         android:id="@+id/cb_income"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:buttonTint="@color/white"
-                        android:checked="true"
-                        android:enabled="false"
+                        android:checked="@{historyViewModel.incomeCheckedFlow}"
+                        android:enabled="true"
+                        android:onClick="@{() -> historyViewModel.clickIncomeFilter()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_income_description"
                         app:layout_constraintHorizontal_chainStyle="packed"
@@ -97,6 +100,7 @@
 
                     <TextView
                         android:id="@+id/tv_income_amount"
+                        totalPriceAmount="@{historyViewModel.incomeTotalFlow}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/kopubworld_dotum_pro_medium"
@@ -106,27 +110,28 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/tv_income_description"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="1,822,480"
-                        totalPriceAmount="@{historyViewModel.incomeTotalFlow}"
-                        />
+                        tools:text="1,822,480" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_expenditure"
+                    checkedState="@{historyViewModel.expenditureCheckedFlow}"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="@color/primary_purple"
+                    android:onClick="@{() -> historyViewModel.clickExpenditureFilter()}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintWidth_percent="0.5">
+                    app:layout_constraintWidth_percent="0.5"
+                    tools:background="@color/primary_purple">
 
                     <CheckBox
                         android:id="@+id/cb_expenditure"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:buttonTint="@color/white"
-                        android:checked="true"
-                        android:enabled="false"
+                        android:checked="@{historyViewModel.expenditureCheckedFlow}"
+                        android:enabled="true"
+                        android:onClick="@{() -> historyViewModel.clickExpenditureFilter()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_expenditure_description"
                         app:layout_constraintHorizontal_chainStyle="packed"
@@ -149,6 +154,7 @@
 
                     <TextView
                         android:id="@+id/tv_expenditure_amount"
+                        totalPriceAmount="@{historyViewModel.expenditureTotalFlow}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/kopubworld_dotum_pro_medium"
@@ -158,8 +164,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/tv_expenditure_description"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="1,822,480"
-                        totalPriceAmount="@{historyViewModel.expenditureTotalFlow}"/>
+                        tools:text="1,822,480" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

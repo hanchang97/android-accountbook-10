@@ -1,6 +1,8 @@
 package com.nimok97.accountbook.presentation.util
 
+import android.widget.CheckBox
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.nimok97.accountbook.R
@@ -26,4 +28,10 @@ fun applyPriceFormat(view: TextView, price: Int?) {
     val decimalFormat = DecimalFormat("#,###")
     var amountStr = decimalFormat.format(price)
     view.text = amountStr
+}
+
+@BindingAdapter("checkedState")
+fun applyBackground(view: ConstraintLayout, checked: Boolean){
+    if(checked) view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.primary_purple))
+    else view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.primary_light_purple))
 }
