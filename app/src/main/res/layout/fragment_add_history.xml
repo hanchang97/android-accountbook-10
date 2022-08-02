@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="addHistoryViewModel"
+            type="com.nimok97.accountbook.presentation.history.manage.add.AddHistoryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,12 +57,14 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_income"
+                    checkedState="@{addHistoryViewModel.incomeCheckedFlow}"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:background="@color/primary_purple"
+                    android:onClick="@{() -> addHistoryViewModel.selectIncome()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintWidth_percent="0.5"
-                    tools:background="@color/primary_purple"
-                    android:background="@color/primary_purple">
+                    tools:background="@color/primary_purple">
 
                     <TextView
                         android:id="@+id/tv_income_description"
@@ -79,12 +84,14 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_expenditure"
+                    checkedState="@{addHistoryViewModel.expenditureCheckedFlow}"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:background="@color/primary_light_purple"
+                    android:onClick="@{() -> addHistoryViewModel.selectExpenditure()}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintWidth_percent="0.5"
-                    tools:background="@color/primary_light_purple"
-                    android:background="@color/primary_light_purple">
+                    tools:background="@color/primary_light_purple">
 
                     <TextView
                         android:id="@+id/tv_expenditure_description"
@@ -285,6 +292,22 @@
             app:layout_constraintEnd_toEndOf="@id/gl_end"
             app:layout_constraintStart_toStartOf="@id/gl_start"
             app:layout_constraintTop_toBottomOf="@id/et_content" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="40dp"
+            android:backgroundTint="@color/primary_yellow_50"
+            android:enabled="false"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:text="등록하기"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="328:50"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toStartOf="@id/gl_start"
+            app:shapeAppearanceOverlay="@style/addButtonRadius" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

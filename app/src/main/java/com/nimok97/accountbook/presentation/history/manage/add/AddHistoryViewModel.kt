@@ -20,7 +20,21 @@ class AddHistoryViewModel @Inject constructor(
     private val getAllMethodUseCase: GetAllMethodUseCase
 ): ViewModel() {
 
-    var selectedMethodId = 0
+    var categoryType = 0 // 0 = 수입, 1 = 지출
+    var selectedMethodId = -1
+    var selectedCategoryId = -1
+    var year = 0
+    var month = 0
+    var dayNum = 0
+    var dayStr = ""
+    var amount = 0
+    var content = "미입력" // 선택 사항
+
+    private val _incomeCheckedFlow = MutableStateFlow<Boolean>(true)
+    val incomeCheckedFlow: StateFlow<Boolean> = _incomeCheckedFlow
+
+    private val _expenditureCheckedFlow = MutableStateFlow<Boolean>(false)
+    val expenditureCheckedFlow: StateFlow<Boolean> = _expenditureCheckedFlow
 
     private val _methodListFlow = MutableStateFlow<List<Method>>(emptyList())
     val methodistFlow: StateFlow<List<Method>> = _methodListFlow
@@ -30,6 +44,34 @@ class AddHistoryViewModel @Inject constructor(
 
     private val _categoryExpenditureListFlow = MutableStateFlow<List<Category>>(emptyList())
     val categoryExpenditureListFlow: StateFlow<List<Category>> = _categoryExpenditureListFlow
+
+    private val _buttonActiveFlow = MutableStateFlow<Boolean>(false)
+    val buttonActiveFlow: StateFlow<Boolean> = _buttonActiveFlow
+
+    fun selectIncome(){
+        _incomeCheckedFlow.value = true
+        _expenditureCheckedFlow.value = false
+        categoryType = 0
+        clearData()
+    }
+
+    fun selectExpenditure(){
+        _incomeCheckedFlow.value = false
+        _expenditureCheckedFlow.value = true
+        categoryType = 1
+        clearData()
+    }
+
+    fun clearData(){
+        selectedMethodId = -1
+        selectedCategoryId = -1
+        year = 0
+        month = 0
+        dayNum = 0
+        dayStr = ""
+        amount = 0
+        content = "미입력"
+    }
 
     fun getAllMethod() {
         viewModelScope.launch(Dispatchers.IO) {
