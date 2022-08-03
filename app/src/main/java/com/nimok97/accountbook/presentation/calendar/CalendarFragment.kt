@@ -12,14 +12,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.nimok97.accountbook.R
+import com.nimok97.accountbook.common.getCurrentHistoryDateString
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentCalendarBinding
 import com.nimok97.accountbook.presentation.MainViewModel
 import com.nimok97.accountbook.presentation.calendar.adpater.CalendarDataItemAdapter
+import com.nimok97.accountbook.presentation.util.CustomAppBar
 import com.nimok97.accountbook.presentation.util.calculateCurrentMonthDayCount
 import com.nimok97.accountbook.presentation.util.calculateCurrentMonthStartDay
-import com.nimok97.accountbook.presentation.util.calculateFirstDayOfMonth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -48,14 +50,27 @@ class CalendarFragment : Fragment() {
     }
 
     private fun initView() {
+        setAppBar()
         setCalendar()
         setRecyclerView()
         collectData()
     }
 
+    private fun setAppBar() {
+        binding.customAppBar.setOnLeftImageClickListener(LeftListener())
+        binding.customAppBar.setOnRightImageClickListener(RightListener())
+    }
+
     private fun setCalendar() {
         calendarViewModel.currentYear = mainViewModel.currentYear
         calendarViewModel.currentMonth = mainViewModel.currentMonth
+
+        binding.customAppBar.setTitle(
+            getCurrentHistoryDateString(
+                calendarViewModel.currentYear,
+                calendarViewModel.currentMonth
+            )
+        )
 
         calendarViewModel.dayCount = calculateCurrentMonthDayCount(
             calendarViewModel.currentYear,
@@ -87,6 +102,7 @@ class CalendarFragment : Fragment() {
         binding.rvCalendar.apply {
             adapter = calendarDataItemAdapter
             layoutManager = GridLayoutManager(requireContext(), 7)
+            itemAnimator = null
         }
     }
 
@@ -97,6 +113,30 @@ class CalendarFragment : Fragment() {
                     calendarDataItemAdapter.submitList(it.toList())
                 }
             }
+        }
+    }
+
+    inner class LeftListener : CustomAppBar.LeftImageClickListener {
+        override fun clickLeft(view: View) {
+            if (mainViewModel.currentMonth > 1) {
+                mainViewModel.currentMonth -= 1
+            } else {
+                mainViewModel.currentMonth = 12
+                mainViewModel.currentYear -= 1
+            }
+            setCalendar()
+        }
+    }
+
+    inner class RightListener : CustomAppBar.RightImageClickListener {
+        override fun clickRight(view: View) {
+            if (mainViewModel.currentMonth < 12) {
+                mainViewModel.currentMonth += 1
+            } else {
+                mainViewModel.currentMonth = 1
+                mainViewModel.currentYear += 1
+            }
+            setCalendar()
         }
     }
 }

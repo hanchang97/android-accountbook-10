@@ -49,15 +49,7 @@ class CalendarViewModel @Inject constructor(
                 result.isSuccess -> {
                     val resultList = result.getOrNull()
                     resultList?.let {
-                        if (it.isEmpty()) {
-                            printLog("수입/지출 내역이 없습니다")
-                            withContext(Dispatchers.Main) {
-                                _incomeTotalFlow.value = 0
-                                _expenditureTotalFlow.value = 0
-                            }
-                        } else {
-                            setCalendar(it)
-                        }
+                        setCalendar(it)
                     }
                 }
                 result.isFailure -> {
@@ -67,7 +59,7 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    fun setCalendar(historyList: List<History>) {
+    suspend fun setCalendar(historyList: List<History>) {
         var preDayCount = if (startDay == 7) 0 else startDay
         var nextDayCount = 42 - preDayCount - dayCount
         printLog("pre : $preDayCount, current : $dayCount, next : $nextDayCount, preMontDayCount : $preMonthDayCount")
@@ -122,6 +114,8 @@ class CalendarViewModel @Inject constructor(
             printLog("$it")
         }
 
-        _calendarDataListFlow.value = calendarList
+        withContext(Dispatchers.Main) {
+            _calendarDataListFlow.value = calendarList
+        }
     }
 }

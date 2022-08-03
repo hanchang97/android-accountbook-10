@@ -35,8 +35,13 @@ class CalendarDataItemAdapter :
     }
 
     companion object CalendarDataItemDiffUtil : DiffUtil.ItemCallback<CalendarData>() {
-        override fun areItemsTheSame(oldItem: CalendarData, newItem: CalendarData) =
-            oldItem == newItem
+        override fun areItemsTheSame(oldItem: CalendarData, newItem: CalendarData): Boolean {
+            return if (oldItem.year == newItem.year && oldItem.month == newItem.month && oldItem.day == newItem.day) {
+                (oldItem.year == newItem.year && oldItem.month == newItem.month && oldItem.day == newItem.day)
+            } else {
+                oldItem == newItem
+            }
+        }
 
         override fun areContentsTheSame(oldItem: CalendarData, newItem: CalendarData) =
             oldItem == newItem
