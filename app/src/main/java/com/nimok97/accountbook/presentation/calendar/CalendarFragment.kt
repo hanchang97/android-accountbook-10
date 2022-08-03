@@ -8,14 +8,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
 import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentCalendarBinding
 import com.nimok97.accountbook.presentation.MainViewModel
+import com.nimok97.accountbook.presentation.calendar.adpater.CalendarDataItemAdapter
 import com.nimok97.accountbook.presentation.util.calculateCurrentMonthDayCount
 import com.nimok97.accountbook.presentation.util.calculateCurrentMonthStartDay
 import com.nimok97.accountbook.presentation.util.calculateFirstDayOfMonth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CalendarFragment : Fragment() {
@@ -23,6 +29,7 @@ class CalendarFragment : Fragment() {
     private lateinit var binding: FragmentCalendarBinding
     private val mainViewModel: MainViewModel by activityViewModels()
     private val calendarViewModel: CalendarViewModel by viewModels()
+    private lateinit var calendarDataItemAdapter: CalendarDataItemAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +49,8 @@ class CalendarFragment : Fragment() {
 
     private fun initView() {
         setCalendar()
+        setRecyclerView()
+        collectData()
     }
 
     private fun setCalendar() {
@@ -71,5 +80,23 @@ class CalendarFragment : Fragment() {
         }
 
         calendarViewModel.getHistoryitemList()
+    }
+
+    private fun setRecyclerView() {
+        calendarDataItemAdapter = CalendarDataItemAdapter()
+        binding.rvCalendar.apply {
+            adapter = calendarDataItemAdapter
+            layoutManager = GridLayoutManager(requireContext(), 7)
+        }
+    }
+
+    private fun collectData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                calendarViewModel.calendarDataListFlow.collect {
+                    calendarDataItemAdapter.submitList(it.toList())
+                }
+            }
+        }
     }
 }

@@ -203,7 +203,7 @@ class HistoryItemAdapter(
     companion object HistoryItemDiffUtil : DiffUtil.ItemCallback<HistoryItem>() {
 
         override fun areItemsTheSame(oldItem: HistoryItem, newItem: HistoryItem) =
-            oldItem.history!!.id == oldItem.history!!.id
+            oldItem.history!!.id == newItem.history!!.id
 
         override fun areContentsTheSame(oldItem: HistoryItem, newItem: HistoryItem) =
             oldItem == newItem

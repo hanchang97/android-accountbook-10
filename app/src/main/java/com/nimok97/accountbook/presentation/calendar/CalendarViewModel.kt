@@ -36,6 +36,9 @@ class CalendarViewModel @Inject constructor(
     private val _expenditureTotalFlow = MutableStateFlow<Int>(0)
     val expenditureTotalFlow: StateFlow<Int> = _expenditureTotalFlow
 
+    private val _calendarDataListFlow = MutableStateFlow<List<CalendarData>>(emptyList())
+    val calendarDataListFlow: StateFlow<List<CalendarData>> = _calendarDataListFlow
+
     fun getHistoryitemList() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = getAllHistoryByYearAndMonthUseCase.getAllHistoryByYearAndMonth(
@@ -118,5 +121,7 @@ class CalendarViewModel @Inject constructor(
         calendarList.forEach {
             printLog("$it")
         }
+
+        _calendarDataListFlow.value = calendarList
     }
 }
