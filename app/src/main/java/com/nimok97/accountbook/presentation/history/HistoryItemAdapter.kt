@@ -3,10 +3,12 @@ package com.nimok97.accountbook.presentation.history
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.ItemHistoryContentBinding
 import com.nimok97.accountbook.databinding.ItemHistoryHeaderBinding
@@ -27,7 +29,7 @@ class HistoryItemAdapter(
         }
     }
 
-    class HeaderViewHolder(val binding: ItemHistoryHeaderBinding) :
+    inner class HeaderViewHolder(val binding: ItemHistoryHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(historyItem: HistoryItem) {
             binding.history = historyItem.history
@@ -36,12 +38,13 @@ class HistoryItemAdapter(
         }
     }
 
-    class ContentViewHolder(val binding: ItemHistoryContentBinding) :
+    inner class ContentViewHolder(val binding: ItemHistoryContentBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
             historyItem: HistoryItem,
             contentClick: (history: History) -> Unit,
-            contentLongClick: (pos: Int, id: Int) -> Unit
+            contentLongClick: (pos: Int, id: Int) -> Unit,
+            checkContent: (id: Int) -> Unit
         ) {
             binding.history = historyItem.history
             binding.category = historyItem.category
@@ -59,15 +62,44 @@ class HistoryItemAdapter(
 
             historyItem.isCheckVisible?.let {
                 binding.cbDelete.isVisible = it
+                if (it) binding.root.setBackgroundColor(
+                    ContextCompat.getColor(
+                        binding.root.context,
+                        R.color.white
+                    )
+                )
+                else binding.root.setBackgroundColor(
+                    ContextCompat.getColor(
+                        binding.root.context,
+                        R.color.primary_off_white
+                    )
+                )
             }
 
             historyItem.isChecked?.let {
                 binding.cbDelete.isChecked = it
             }
-            
+
             binding.root.setOnClickListener {
                 historyItem.isLongClickMode?.let {
-                    if (!it) {
+                    if (it) { // 롱클릭 모드
+                        getItem(adapterPosition).isCheckVisible?.let {
+                            if(it) { // 선택 -> 미선택
+                                getItem(adapterPosition).isCheckVisible = false
+                                getItem(adapterPosition).isChecked = false
+                                binding.cbDelete.isVisible = false
+                                binding.root.setBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.primary_off_white))
+                            }
+                            else {
+                                getItem(adapterPosition).isCheckVisible = true
+                                getItem(adapterPosition).isChecked = true
+                                binding.cbDelete.isVisible = true
+                                binding.cbDelete.isChecked = true
+                                binding.root.setBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.white))
+                            }
+                            checkContent.invoke(historyItem.history!!.id) // 선택한 내역 id 전달
+                        }
+                    } else { // 롱클릭 모드 아님
                         historyItem.isCheckVisible?.let {
                             if (!it) {
                                 historyItem.history?.let {
@@ -120,7 +152,7 @@ class HistoryItemAdapter(
                 holder.bind(getItem(position))
             }
             is ContentViewHolder -> {
-                holder.bind(getItem(position), contentClick, contentLongClick)
+                holder.bind(getItem(position), contentClick, contentLongClick, checkContent)
             }
         }
     }

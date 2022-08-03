@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nimok97.accountbook.R
+import com.nimok97.accountbook.common.getCurrentHistoryDateString
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
 import com.nimok97.accountbook.databinding.FragmentHistoryBinding
@@ -92,6 +93,7 @@ class HistoryFragment : Fragment() {
         }, { pos, id ->
             printLog("history item long clicked")
             historyItemAdapter.enableLongClickMode(pos)
+            mainViewModel.setLongClickMode(true)
         }, {
 
         })
@@ -102,6 +104,8 @@ class HistoryFragment : Fragment() {
     }
 
     private fun collectData() {
+        collectLongClikModeData()
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 historyViewModel.historyItemListFlow.collect {
@@ -119,6 +123,31 @@ class HistoryFragment : Fragment() {
                     } else {
                         binding.rvHistory.isVisible = true
                         binding.tvHistoryEmpty.isVisible = false
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectLongClikModeData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.isLongClickModeFlow.collect {
+                    if(it) {
+                        with(binding.customAppBar){
+                            setTitle("1개 선택")
+                            setLeftImage(R.drawable.ic_back)
+                            setRightImage(R.drawable.ic_trash)
+                        }
+                    } else {
+                        with(binding.customAppBar){
+                            setTitle(getCurrentHistoryDateString(
+                                mainViewModel.currentYear,
+                                mainViewModel.currentMonth
+                            ))
+                            setLeftImage(R.drawable.ic_left)
+                            setRightImage(R.drawable.ic_right)
+                        }
                     }
                 }
             }

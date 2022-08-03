@@ -37,6 +37,10 @@ class MainViewModel @Inject constructor() : ViewModel() {
     private val _backButtonPressedEvent = MutableSharedFlow<Boolean>()
     val backButtonPressedEvent = _backButtonPressedEvent.asSharedFlow()
 
+    fun setLongClickMode(boolean: Boolean) {
+        _isLongClickModeFlow.value = boolean
+    }
+
     fun fabClick() {
         viewModelScope.launch {
             _fabClickedEvent.emit(true)
