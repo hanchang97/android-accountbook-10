@@ -21,6 +21,7 @@ import com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCateg
 import com.nimok97.accountbook.presentation.setting.method.MethodFragment
 import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
 import com.nimok97.accountbook.presentation.util.FragmentStackManager
+import com.nimok97.accountbook.presentation.util.calculateCurrentDay
 import com.nimok97.accountbook.presentation.util.calculateCurrentMonth
 import com.nimok97.accountbook.presentation.util.calculateCurrentYear
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,16 +36,6 @@ class MainActivity : AppCompatActivity() {
     private var FINISH_INTERVAL_TIME: Long = 2000
     private var backPressedTime: Long = 0
 
-    private val historyFragment by lazy { HistoryFragment() }
-    private val calendarFragment by lazy { CalendarFragment() }
-    private val statisticsFragment by lazy { StatisticsFragment() }
-    private val settingFragment by lazy { SettingFragment() }
-
-    // private val addHistoryFragment by lazy { AddHistoryFragment() }
-
-    private val methodFragment by lazy { MethodFragment() }
-    private val expenditureCategoryFragment by lazy { ExpenditureCategoryFragment() }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -56,12 +47,13 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         setBottomNavigation()
         setCurrentDate()
-        changeTab(0, historyFragment, R.id.fragment_history)
+        changeTab(0, HistoryFragment(), R.id.fragment_history)
     }
 
-    private fun setCurrentDate(){
+    private fun setCurrentDate() {
         mainViewModel.currentYear = calculateCurrentYear()
         mainViewModel.currentMonth = calculateCurrentMonth()
+        mainViewModel.currentDay = calculateCurrentDay()
     }
 
     private fun setBottomNavigation() {
@@ -72,19 +64,21 @@ class MainActivity : AppCompatActivity() {
                 when (it.itemId) {
                     R.id.fragment_history -> {
                         if (this.selectedItemId != R.id.fragment_history)
-                            changeTab(0, historyFragment, R.id.fragment_history)
+                            changeTab(0, HistoryFragment(), R.id.fragment_history)
                     }
                     R.id.fragment_calendar -> {
-                        if (this.selectedItemId != R.id.fragment_calendar)
+                        if (this.selectedItemId != R.id.fragment_calendar) {
+                            val calendarFragment = CalendarFragment()
                             changeTab(1, calendarFragment, R.id.fragment_calendar)
+                        }
                     }
                     R.id.fragment_statistics -> {
                         if (this.selectedItemId != R.id.fragment_statistics)
-                            changeTab(2, statisticsFragment, R.id.fragment_statistics)
+                            changeTab(2, StatisticsFragment(), R.id.fragment_statistics)
                     }
                     R.id.fragment_setting -> {
                         if (this.selectedItemId != R.id.fragment_setting)
-                            changeTab(3, settingFragment, R.id.fragment_setting)
+                            changeTab(3, SettingFragment(), R.id.fragment_setting)
                     }
                 }
                 true
@@ -127,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun collectHistoryFragmentEvent(){
+    private fun collectHistoryFragmentEvent() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToEditHistoryFragmentEvent.collect {
@@ -146,6 +140,7 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToMethodFragmentEvent.collect {
                     if (it) {
+                        val methodFragment = MethodFragment()
                         FragmentStackManager.pushStack(3, methodFragment)
                         changeFragment(methodFragment)
                     }
@@ -216,7 +211,7 @@ class MainActivity : AppCompatActivity() {
                     FragmentStackManager.popStack(1)
                     changeFragment(FragmentStackManager.getTopStack(1))
                 } else {
-                    changeTab(0, historyFragment, R.id.fragment_history)
+                    changeTab(0, HistoryFragment(), R.id.fragment_history)
                 }
             }
             R.id.fragment_statistics -> {
@@ -224,7 +219,7 @@ class MainActivity : AppCompatActivity() {
                     FragmentStackManager.popStack(2)
                     changeFragment(FragmentStackManager.getTopStack(2))
                 } else {
-                    changeTab(0, historyFragment, R.id.fragment_history)
+                    changeTab(0, HistoryFragment(), R.id.fragment_history)
                 }
             }
             else -> {
@@ -232,7 +227,7 @@ class MainActivity : AppCompatActivity() {
                     FragmentStackManager.popStack(3)
                     changeFragment(FragmentStackManager.getTopStack(3))
                 } else {
-                    changeTab(0, historyFragment, R.id.fragment_history)
+                    changeTab(0, HistoryFragment(), R.id.fragment_history)
                 }
             }
         }
