@@ -1,4 +1,4 @@
-package com.nimok97.accountbook.presentation.history.manage.add
+package com.nimok97.accountbook.presentation.history.manage.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,10 +7,11 @@ import com.nimok97.accountbook.common.getDateString
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
 import com.nimok97.accountbook.domain.model.Category
+import com.nimok97.accountbook.domain.model.History
 import com.nimok97.accountbook.domain.model.Method
-import com.nimok97.accountbook.domain.usecase.AddHistoryUseCase
 import com.nimok97.accountbook.domain.usecase.GetAllCategoryUseCase
 import com.nimok97.accountbook.domain.usecase.GetAllMethodUseCase
+import com.nimok97.accountbook.domain.usecase.UpdateHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,12 +22,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddHistoryViewModel @Inject constructor(
+class EditHistoryViewModel @Inject constructor(
     private val getAllCategoryUseCase: GetAllCategoryUseCase,
     private val getAllMethodUseCase: GetAllMethodUseCase,
-    private val addHistoryUseCase: AddHistoryUseCase
+    private val updateHistoryUseCase: UpdateHistoryUseCase
 ) : ViewModel() {
 
+    var id = -1
     var categoryType = 0 // 0 = 수입, 1 = 지출
     var selectedMethodId = -1
     var selectedCategoryId = -1
@@ -37,11 +39,17 @@ class AddHistoryViewModel @Inject constructor(
     var amount = 0
     var content = "미입력" // 선택 사항
 
-    private val _incomeCheckedFlow = MutableStateFlow<Boolean>(true)
-    val incomeCheckedFlow: StateFlow<Boolean> = _incomeCheckedFlow
+    private val _dateStringFlow = MutableStateFlow<String>(getDateString(year, month, dayNum, dayStr))
+    val dateStringFlow: StateFlow<String> = _dateStringFlow
 
-    private val _expenditureCheckedFlow = MutableStateFlow<Boolean>(false)
-    val expenditureCheckedFlow: StateFlow<Boolean> = _expenditureCheckedFlow
+    private val _dateClickedEvent = MutableSharedFlow<Boolean>()
+    val dateClickedEvent = _dateClickedEvent.asSharedFlow()
+
+    private val _buttonActiveFlow = MutableStateFlow<Boolean>(false)
+    val buttonActiveFlow: StateFlow<Boolean> = _buttonActiveFlow
+
+    private val _updateHistorySuccessful = MutableSharedFlow<Boolean>()
+    val updateHistorySuccessful = _updateHistorySuccessful.asSharedFlow()
 
     private val _methodListFlow = MutableStateFlow<List<Method>>(emptyList())
     val methodistFlow: StateFlow<List<Method>> = _methodListFlow
@@ -52,30 +60,21 @@ class AddHistoryViewModel @Inject constructor(
     private val _categoryExpenditureListFlow = MutableStateFlow<List<Category>>(emptyList())
     val categoryExpenditureListFlow: StateFlow<List<Category>> = _categoryExpenditureListFlow
 
-    private val _dateClickedEvent = MutableSharedFlow<Boolean>()
-    val dateClickedEvent = _dateClickedEvent.asSharedFlow()
+    private val _categoryListFlow = MutableStateFlow<List<Category>>(emptyList())
+    val categoryListFlow: StateFlow<List<Category>> = _categoryListFlow
 
-    private val _dateStringFlow = MutableStateFlow<String>(defaultDateString)
-    val dateStringFlow: StateFlow<String> = _dateStringFlow
-
-    private val _buttonActiveFlow = MutableStateFlow<Boolean>(false)
-    val buttonActiveFlow: StateFlow<Boolean> = _buttonActiveFlow
-
-    private val _addHistorySuccessful = MutableSharedFlow<Boolean>()
-    val addHistorySuccessful = _addHistorySuccessful.asSharedFlow()
-
-    fun selectIncome() {
-        _incomeCheckedFlow.value = true
-        _expenditureCheckedFlow.value = false
-        categoryType = 0
-        clearData()
-    }
-
-    fun selectExpenditure() {
-        _incomeCheckedFlow.value = false
-        _expenditureCheckedFlow.value = true
-        categoryType = 1
-        clearData()
+    fun setOrginData(selectedHistory: History) {
+        id = selectedHistory.id
+        categoryType = selectedHistory.type
+        selectedMethodId = selectedHistory.methodId
+        selectedCategoryId = selectedHistory.categoryId
+        year = selectedHistory.year
+        month = selectedHistory.month
+        dayNum = selectedHistory.dayNum
+        dayStr = selectedHistory.dayStr
+        amount = selectedHistory.amount
+        content = selectedHistory.content
+        _dateStringFlow.value = getDateString(year, month, dayNum, dayStr)
     }
 
     fun dateClick() {
@@ -86,19 +85,6 @@ class AddHistoryViewModel @Inject constructor(
 
     fun setDateString() {
         _dateStringFlow.value = getDateString(year, month, dayNum, dayStr)
-    }
-
-    fun clearData() {
-        selectedMethodId = -1
-        selectedCategoryId = -1
-        year = 0
-        month = 0
-        dayNum = 0
-        dayStr = ""
-        amount = 0
-        content = "미입력"
-        _dateStringFlow.value = defaultDateString
-        checkData()
     }
 
     fun checkData() {
@@ -142,6 +128,10 @@ class AddHistoryViewModel @Inject constructor(
                         }
                         _categoryIncomeListFlow.value = incomeList
                         _categoryExpenditureListFlow.value = expenditureList
+                        when(categoryType) {
+                            0 -> _categoryListFlow.value = incomeList
+                            else -> _categoryListFlow.value = expenditureList
+                        }
                     }
                 }
                 result.isFailure -> {
@@ -151,7 +141,7 @@ class AddHistoryViewModel @Inject constructor(
         }
     }
 
-    fun addHistory() {
+    fun updateHistory() {
         val historyDao = HistoryDao(
             categoryType,
             year,
@@ -166,16 +156,15 @@ class AddHistoryViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             printLog("$historyDao")
-            val result = addHistoryUseCase.addHistory(historyDao)
+            val result = updateHistoryUseCase.updateHistory(id, historyDao)
             when {
                 result.isSuccess -> {
-                    _addHistorySuccessful.emit(true)
+                    _updateHistorySuccessful.emit(true)
                 }
                 result.isFailure -> {
-                    _addHistorySuccessful.emit(false)
+                    _updateHistorySuccessful.emit(false)
                 }
             }
         }
     }
-
 }

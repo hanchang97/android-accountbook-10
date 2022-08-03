@@ -86,26 +86,33 @@ class HistoryFragment : Fragment() {
     }
 
     private fun setRecyclerView() {
-        historyItemAdapter = HistoryItemAdapter()
+        historyItemAdapter = HistoryItemAdapter({
+            historyViewModel.selectedHistoryForEdit = it
+            mainViewModel.moveToEditHistoryFragment()
+        }, {
+
+        }, {
+
+        })
         binding.rvHistory.apply {
             adapter = historyItemAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
-    private fun collectData(){
+    private fun collectData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
-                historyViewModel.historyItemListFlow.collect{
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                historyViewModel.historyItemListFlow.collect {
                     historyItemAdapter.submitList(it)
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
-                historyViewModel.emptyEvent.collect{
-                    if(it) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                historyViewModel.emptyEvent.collect {
+                    if (it) {
                         binding.rvHistory.isVisible = false
                         binding.tvHistoryEmpty.isVisible = true
                     } else {

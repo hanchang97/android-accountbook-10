@@ -16,4 +16,8 @@ class HistoryRepositoryImpl(
     override suspend fun getAllHistory(year: Int, month: Int): Result<List<History>> {
         return accountBookDataSource.getHistoriesByYearAndMonth(year, month)
     }
+
+    override suspend fun updateHistory(id: Int, historyDao: HistoryDao): Result<Int> {
+        return accountBookDataSource.updateHistory(id, historyDao)
+    }
 }

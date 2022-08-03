@@ -6,11 +6,18 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.ItemHistoryContentBinding
 import com.nimok97.accountbook.databinding.ItemHistoryHeaderBinding
+import com.nimok97.accountbook.domain.model.History
 import com.nimok97.accountbook.domain.model.HistoryItem
 
-class HistoryItemAdapter : ListAdapter<HistoryItem, RecyclerView.ViewHolder>(HistoryItemDiffUtil) {
+class HistoryItemAdapter(
+    private val contentClick: (history: History) -> Unit,
+    private val contentLongClick: () -> Unit,
+    private val checkContent: (id: Int) -> Unit
+) :
+    ListAdapter<HistoryItem, RecyclerView.ViewHolder>(HistoryItemDiffUtil) {
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position).viewType) {
@@ -30,18 +37,29 @@ class HistoryItemAdapter : ListAdapter<HistoryItem, RecyclerView.ViewHolder>(His
 
     class ContentViewHolder(val binding: ItemHistoryContentBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(historyItem: HistoryItem) {
+        fun bind(historyItem: HistoryItem, contentClick: (history: History) -> Unit) {
             binding.history = historyItem.history
             binding.category = historyItem.category
             binding.method = historyItem.method
 
             historyItem.isLastItem?.let {
-                if(it) {
+                if (it) {
                     binding.viewDividerNotLast.isVisible = false
                     binding.viewDividerLast.isVisible = true
                 } else {
                     binding.viewDividerNotLast.isVisible = true
                     binding.viewDividerLast.isVisible = false
+                }
+            }
+
+            binding.root.setOnClickListener {
+                historyItem.isCheckVisible?.let {
+                    if (!it) {
+                        historyItem.history?.let {
+                            printLog("history content selected : $it")
+                            contentClick.invoke(it)
+                        }
+                    }
                 }
             }
         }
@@ -76,7 +94,7 @@ class HistoryItemAdapter : ListAdapter<HistoryItem, RecyclerView.ViewHolder>(His
                 holder.bind(getItem(position))
             }
             is ContentViewHolder -> {
-                holder.bind(getItem(position))
+                holder.bind(getItem(position), contentClick)
             }
         }
     }
