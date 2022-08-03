@@ -53,6 +53,14 @@ class HistoryViewModel @Inject constructor(
 
     lateinit var selectedHistoryForEdit: History
 
+    val deleteIdSet = mutableSetOf<Int>()
+
+    fun addOrRemoveDeleteId(id: Int): Int {
+        if(deleteIdSet.contains(id)) deleteIdSet.remove(id)
+        else deleteIdSet.add(id)
+        return deleteIdSet.size
+    }
+
     fun addHistory(historyDao: HistoryDao) {
         viewModelScope.launch(Dispatchers.IO) {
             addHistoryUseCase.addHistory(historyDao)
@@ -222,5 +230,9 @@ class HistoryViewModel @Inject constructor(
         withContext(Dispatchers.Main) {
             _historyItemListFlow.value = historyItemList
         }
+    }
+
+    fun deleteHistories() {
+        printLog("$deleteIdSet")
     }
 }

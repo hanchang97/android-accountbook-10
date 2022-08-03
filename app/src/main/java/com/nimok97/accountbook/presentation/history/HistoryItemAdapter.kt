@@ -178,6 +178,27 @@ class HistoryItemAdapter(
         submitList(newList.toList())
     }
 
+    fun disableLongClickMode() {
+        val newList = ArrayList<HistoryItem>()
+        currentList.forEachIndexed { index, historyItem ->
+            newList.add(
+                HistoryItem(
+                    viewType = historyItem.viewType,
+                    history = (if (historyItem.history != null) historyItem.history!!.copy() else null),
+                    category = (if (historyItem.category != null) historyItem.category!!.copy() else null),
+                    method = (if (historyItem.method != null) historyItem.method!!.copy() else null),
+                    isLastItem = historyItem.isLastItem,
+                    isCheckVisible = false,
+                    isChecked = false,
+                    income = historyItem.income,
+                    expenditure = historyItem.expenditure,
+                    isLongClickMode = false
+                )
+            )
+        }
+        submitList(newList.toList())
+    }
+
 
     companion object HistoryItemDiffUtil : DiffUtil.ItemCallback<HistoryItem>() {
 
