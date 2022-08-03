@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
+        <variable
+            name="calendarViewModel"
+            type="com.nimok97.accountbook.presentation.calendar.CalendarViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,10 +28,115 @@
             android:id="@+id/rv_calendar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/customAppBar"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/customAppBar" />
 
+        <View
+            android:id="@+id/view_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="25dp"
+            android:background="@color/primary_purple"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_total_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:text="총합"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@id/view_bottom"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_total"
+            calendarTotalIncomePrice="@{calendarViewModel.totalFlow}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:textColor="@color/primary_purple"
+            app:layout_constraintBottom_toBottomOf="@id/tv_total_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_total_description"
+            tools:text="987,840" />
+
+        <View
+            android:id="@+id/view_divider_1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/primary_purple_40"
+            app:layout_constraintBottom_toTopOf="@id/tv_total_description"
+            app:layout_constraintEnd_toEndOf="@id/tv_total"
+            app:layout_constraintStart_toStartOf="@id/tv_total_description" />
+
+        <TextView
+            android:id="@+id/tv_expenditure_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:text="지출"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@id/view_divider_1"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_expenditure"
+            calendarTotalExpenditurePrice="@{calendarViewModel.expenditureTotalFlow}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:textColor="@color/primary_red"
+            app:layout_constraintBottom_toBottomOf="@id/tv_expenditure_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_expenditure_description"
+            tools:text="987,840" />
+
+        <View
+            android:id="@+id/view_divider_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/primary_purple_40"
+            app:layout_constraintBottom_toTopOf="@id/tv_expenditure_description"
+            app:layout_constraintEnd_toEndOf="@id/tv_expenditure"
+            app:layout_constraintStart_toStartOf="@id/tv_expenditure_description" />
+
+        <TextView
+            android:id="@+id/tv_income_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:text="수입"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@id/view_divider_2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_income"
+            calendarTotalIncomePrice="@{calendarViewModel.incomeTotalFlow}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:textColor="@color/income"
+            app:layout_constraintBottom_toBottomOf="@id/tv_income_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_income_description"
+            tools:text="987,840" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

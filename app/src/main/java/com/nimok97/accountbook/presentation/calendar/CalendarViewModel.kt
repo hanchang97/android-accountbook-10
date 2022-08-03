@@ -36,6 +36,9 @@ class CalendarViewModel @Inject constructor(
     private val _expenditureTotalFlow = MutableStateFlow<Int>(0)
     val expenditureTotalFlow: StateFlow<Int> = _expenditureTotalFlow
 
+    private val _totalFlow = MutableStateFlow<Int>(0)
+    val totalFlow: StateFlow<Int> = _totalFlow
+
     private val _calendarDataListFlow = MutableStateFlow<List<CalendarData>>(emptyList())
     val calendarDataListFlow: StateFlow<List<CalendarData>> = _calendarDataListFlow
 
@@ -93,6 +96,7 @@ class CalendarViewModel @Inject constructor(
 
         _incomeTotalFlow.value = incomeTotal
         _expenditureTotalFlow.value = expenditureTotal
+        _totalFlow.value = incomeTotal - expenditureTotal
 
         (1..preDayCount).forEach {
             calendarList.add(

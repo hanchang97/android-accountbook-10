@@ -78,14 +78,14 @@
                 android:id="@+id/view_divider_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/primary_light_purple"
+                android:background="@color/primary_purple_40"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <View
                 android:id="@+id/view_divider_right"
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/primary_light_purple"
+                android:background="@color/primary_purple_40"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

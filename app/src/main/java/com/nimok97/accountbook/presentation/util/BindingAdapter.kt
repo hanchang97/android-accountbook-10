@@ -47,9 +47,31 @@ fun applyCalendarExoenditurePrice(view: TextView, price: Int?) {
     view.isVisible = price != 0
 }
 
+@BindingAdapter("calendarTotalIncomePrice")
+fun applyCalendarTotalIncomePrice(view: TextView, price: Int?) {
+    val decimalFormat = DecimalFormat("#,###")
+    var amountStr = decimalFormat.format(price)
+    view.text = amountStr
+}
+
+@BindingAdapter("calendarTotalExpenditurePrice")
+fun applyCalendarTotalExoenditurePrice(view: TextView, price: Int?) {
+    if (price == 0) view.text = "0"
+    else {
+        val decimalFormat = DecimalFormat("#,###")
+        var amountStr = decimalFormat.format(price)
+        view.text = "-$amountStr"
+    }
+}
+
 @BindingAdapter("calendarDayColor")
 fun applyCalendarDayColor(view: TextView, isCurrentMonth: Boolean) {
-    if(isCurrentMonth) view.setTextColor(ContextCompat.getColor(view.context, R.color.primary_purple))
+    if (isCurrentMonth) view.setTextColor(
+        ContextCompat.getColor(
+            view.context,
+            R.color.primary_purple
+        )
+    )
     else view.setTextColor(ContextCompat.getColor(view.context, R.color.primary_purple_40))
 }
 

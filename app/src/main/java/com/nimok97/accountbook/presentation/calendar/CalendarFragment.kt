@@ -40,6 +40,8 @@ class CalendarFragment : Fragment() {
     ): View? {
         printLog("CalendarFragment / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_calendar, container, false)
+        binding.calendarViewModel = calendarViewModel
+        binding.lifecycleOwner = this.viewLifecycleOwner
         return binding.root
     }
 
