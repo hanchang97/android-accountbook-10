@@ -21,6 +21,7 @@ import com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCateg
 import com.nimok97.accountbook.presentation.setting.method.MethodFragment
 import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
 import com.nimok97.accountbook.presentation.util.FragmentStackManager
+import com.nimok97.accountbook.presentation.util.calculateCurrentDay
 import com.nimok97.accountbook.presentation.util.calculateCurrentMonth
 import com.nimok97.accountbook.presentation.util.calculateCurrentYear
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,11 +41,6 @@ class MainActivity : AppCompatActivity() {
     private val statisticsFragment by lazy { StatisticsFragment() }
     private val settingFragment by lazy { SettingFragment() }
 
-    // private val addHistoryFragment by lazy { AddHistoryFragment() }
-
-    private val methodFragment by lazy { MethodFragment() }
-    private val expenditureCategoryFragment by lazy { ExpenditureCategoryFragment() }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -59,9 +55,10 @@ class MainActivity : AppCompatActivity() {
         changeTab(0, historyFragment, R.id.fragment_history)
     }
 
-    private fun setCurrentDate(){
+    private fun setCurrentDate() {
         mainViewModel.currentYear = calculateCurrentYear()
         mainViewModel.currentMonth = calculateCurrentMonth()
+        mainViewModel.currentDay = calculateCurrentDay()
     }
 
     private fun setBottomNavigation() {
@@ -127,7 +124,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun collectHistoryFragmentEvent(){
+    private fun collectHistoryFragmentEvent() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToEditHistoryFragmentEvent.collect {
@@ -146,6 +143,7 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToMethodFragmentEvent.collect {
                     if (it) {
+                        val methodFragment = MethodFragment()
                         FragmentStackManager.pushStack(3, methodFragment)
                         changeFragment(methodFragment)
                     }

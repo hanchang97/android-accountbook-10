@@ -15,6 +15,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     var currentYear = 2022
     var currentMonth = 1
+    var currentDay = 1
 
     private val _isLongClickModeFlow = MutableStateFlow<Boolean>(false)
     val isLongClickModeFlow: StateFlow<Boolean> = _isLongClickModeFlow
