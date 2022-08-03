@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
+import com.nimok97.accountbook.domain.model.History
 import com.nimok97.accountbook.domain.model.HistoryItem
 import com.nimok97.accountbook.domain.usecase.AddHistoryUseCase
 import com.nimok97.accountbook.domain.usecase.GetAllHistoryByYearAndMonthUseCase
@@ -49,6 +50,8 @@ class HistoryViewModel @Inject constructor(
 
     private val _expenditureCheckedFlow = MutableStateFlow<Boolean>(true)
     val expenditureCheckedFlow: StateFlow<Boolean> = _expenditureCheckedFlow
+
+    lateinit var selectedHistoryForEdit: History
 
     fun addHistory(historyDao: HistoryDao) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -15,6 +15,7 @@ import com.nimok97.accountbook.databinding.ActivityMainBinding
 import com.nimok97.accountbook.presentation.calendar.CalendarFragment
 import com.nimok97.accountbook.presentation.history.HistoryFragment
 import com.nimok97.accountbook.presentation.history.manage.add.AddHistoryFragment
+import com.nimok97.accountbook.presentation.history.manage.edit.EditHistoryFragment
 import com.nimok97.accountbook.presentation.setting.SettingFragment
 import com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCategoryFragment
 import com.nimok97.accountbook.presentation.setting.method.MethodFragment
@@ -106,6 +107,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun collectData() {
         collectFabCliked()
+        collectHistoryFragmentEvent()
         collectSettingFragmentEvent()
         collectBackEventInMethodFragment()
         collectBackButtonInAppBarPressed()
@@ -119,6 +121,20 @@ class MainActivity : AppCompatActivity() {
                         val addHistoryFragment = AddHistoryFragment()
                         FragmentStackManager.pushStack(0, addHistoryFragment)
                         changeFragment(addHistoryFragment)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectHistoryFragmentEvent(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.moveToEditHistoryFragmentEvent.collect {
+                    if (it) {
+                        val editHistoryFragment = EditHistoryFragment()
+                        FragmentStackManager.pushStack(0, editHistoryFragment)
+                        changeFragment(editHistoryFragment)
                     }
                 }
             }

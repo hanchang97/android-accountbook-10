@@ -349,7 +349,7 @@ class AddHistoryFragment : Fragment() {
         override fun clickLeft(view: View) {
             printLog("${this.javaClass.simpleName}/ back clicked")
             binding.etContent.setText("")
-            mainViewModel.pressBackInMethodFragment()
+            mainViewModel.pressBackButtonInAppBar()
         }
     }
 }

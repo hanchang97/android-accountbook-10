@@ -93,8 +93,29 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
-    suspend fun updateHistory(id: Int, newHistory: History) { // 내역 정보 업데이트
-
+    suspend fun updateHistory(id: Int, historyDao: HistoryDao): Result<Int> { // 내역 정보 업데이트
+        runCatching {
+            val db = dbHelper.writableDatabase
+            val value = ContentValues().apply {
+                put(HisitoryDBStructure.COLUMN_TYPE, historyDao.type)
+                put(HisitoryDBStructure.COLUMN_YEAR, historyDao.year)
+                put(HisitoryDBStructure.COLUMN_MONTH, historyDao.month)
+                put(HisitoryDBStructure.COLUMN_DAY_NUM, historyDao.dayNum)
+                put(HisitoryDBStructure.COLUMN_DAY_STR, historyDao.dayStr)
+                put(HisitoryDBStructure.COLUMN_AMOUNT, historyDao.amount)
+                put(HisitoryDBStructure.COLUMN_CONTENT, historyDao.content)
+                put(HisitoryDBStructure.COLUMN_CATEGORY_ID, historyDao.categoryId)
+                put(HisitoryDBStructure.COLUMN_METHOD_ID, historyDao.methodId)
+            }
+            val upadateWhere = "${HisitoryDBStructure.COLUMN_ID} = ?"
+            val updateWhereArgs = arrayOf("$id")
+            db.update(HisitoryDBStructure.TABLE_NAME, value, upadateWhere, updateWhereArgs)
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
     }
 
     suspend fun addCategory(categoryDao: CategoryDao): Result<Long> { // 수입/지출 카테고리 추가
