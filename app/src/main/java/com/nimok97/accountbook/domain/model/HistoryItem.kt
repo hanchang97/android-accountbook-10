@@ -9,5 +9,6 @@ data class HistoryItem(
     var isCheckVisible: Boolean? = false,
     var isChecked: Boolean? = false,
     var income: Int? = 0,
-    var expenditure: Int? = 0
+    var expenditure: Int? = 0,
+    var isLongClickMode: Boolean? = false
 )

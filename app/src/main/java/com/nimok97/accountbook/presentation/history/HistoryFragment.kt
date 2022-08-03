@@ -90,6 +90,7 @@ class HistoryFragment : Fragment() {
             historyViewModel.selectedHistoryForEdit = it
             mainViewModel.moveToEditHistoryFragment()
         }, {
+            printLog("history item long clicked")
 
         }, {
 
@@ -126,13 +127,21 @@ class HistoryFragment : Fragment() {
 
     inner class LeftListener : CustomAppBar.LeftImageClickListener {
         override fun clickLeft(view: View) {
-            printLog("left clicked")
+            if (mainViewModel.isLongClickModeFlow.value) {
+
+            } else {
+                printLog("Long click mode disabled : left clicked")
+            }
         }
     }
 
     inner class RightListener : CustomAppBar.RightImageClickListener {
         override fun clickRight(view: View) {
-            printLog("right clicked")
+            if (mainViewModel.isLongClickModeFlow.value) {
+
+            } else {
+                printLog("Long click mode disabled : right clicked")
+            }
         }
     }
 }

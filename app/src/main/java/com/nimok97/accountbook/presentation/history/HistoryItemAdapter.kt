@@ -1,6 +1,7 @@
 package com.nimok97.accountbook.presentation.history
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -37,7 +38,11 @@ class HistoryItemAdapter(
 
     class ContentViewHolder(val binding: ItemHistoryContentBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(historyItem: HistoryItem, contentClick: (history: History) -> Unit) {
+        fun bind(
+            historyItem: HistoryItem,
+            contentClick: (history: History) -> Unit,
+            contentLongClick: () -> Unit
+        ) {
             binding.history = historyItem.history
             binding.category = historyItem.category
             binding.method = historyItem.method
@@ -53,15 +58,24 @@ class HistoryItemAdapter(
             }
 
             binding.root.setOnClickListener {
-                historyItem.isCheckVisible?.let {
+                historyItem.isLongClickMode?.let {
                     if (!it) {
-                        historyItem.history?.let {
-                            printLog("history content selected : $it")
-                            contentClick.invoke(it)
+                        historyItem.isCheckVisible?.let {
+                            if (!it) {
+                                historyItem.history?.let {
+                                    printLog("history content selected : $it")
+                                    contentClick.invoke(it)
+                                }
+                            }
                         }
                     }
                 }
             }
+
+            binding.root.setOnLongClickListener(View.OnLongClickListener {
+                contentLongClick.invoke()
+                return@OnLongClickListener true
+            })
         }
     }
 
@@ -94,7 +108,7 @@ class HistoryItemAdapter(
                 holder.bind(getItem(position))
             }
             is ContentViewHolder -> {
-                holder.bind(getItem(position), contentClick)
+                holder.bind(getItem(position), contentClick, contentLongClick)
             }
         }
     }
