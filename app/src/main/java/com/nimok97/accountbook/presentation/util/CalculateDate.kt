@@ -8,20 +8,22 @@ import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.*
 
-fun calculateCurrentYear() {
+fun calculateCurrentYear(): Int {
     val currentTime = Calendar.getInstance().time
     val yearFormat = SimpleDateFormat("yyyy", Locale.KOREAN)
     val yearStr = yearFormat.format(currentTime)
 
     printLog("current year : $yearStr")
+    return yearStr.toInt()
 }
 
-fun calculateCurrentMonth() {
+fun calculateCurrentMonth(): Int {
     val currentTime = Calendar.getInstance().time
     val monthFormat = SimpleDateFormat("MM", Locale.KOREAN)
     val monthStr = monthFormat.format(currentTime)
 
     printLog("current month : $monthStr")
+    return monthStr.toInt()
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

@@ -73,6 +73,16 @@ class CustomAppBar(context: Context, attrs: AttributeSet) : ConstraintLayout(con
         titleTextView.text = title
     }
 
+    fun setLeftImage(imageResource: Int) {
+        val leftImageView = findViewById<ImageView>(R.id.custom_iv_left)
+        leftImageView.setImageResource(imageResource)
+    }
+
+    fun setRightImage(imageResource: Int) {
+        val rightImageView = findViewById<ImageView>(R.id.custom_iv_right)
+        rightImageView.setImageResource(imageResource)
+    }
+
     interface LeftImageClickListener {
         fun clickLeft(view: View)
     }

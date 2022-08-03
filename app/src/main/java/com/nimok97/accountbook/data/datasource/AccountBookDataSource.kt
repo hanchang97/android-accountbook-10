@@ -118,6 +118,20 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
+    suspend fun deleteHistory(id: Int): Result<Int> {
+        runCatching {
+            val db = dbHelper.writableDatabase
+            val where = "${HisitoryDBStructure.COLUMN_ID} = ?"  // id 기준
+            val whereArgs = arrayOf("$id") // id값 일치하는 데이터 지우겠다
+            db.delete(HisitoryDBStructure.TABLE_NAME, where, whereArgs)
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
+    }
+
     suspend fun addCategory(categoryDao: CategoryDao): Result<Long> { // 수입/지출 카테고리 추가
         runCatching {
             val db = dbHelper.writableDatabase

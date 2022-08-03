@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,6 +15,9 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     var currentYear = 2022
     var currentMonth = 1
+
+    private val _isLongClickModeFlow = MutableStateFlow<Boolean>(false)
+    val isLongClickModeFlow: StateFlow<Boolean> = _isLongClickModeFlow
 
     private val _fabClickedEvent = MutableSharedFlow<Boolean>()
     val fabClickedEvent = _fabClickedEvent.asSharedFlow()
@@ -31,6 +36,10 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     private val _backButtonPressedEvent = MutableSharedFlow<Boolean>()
     val backButtonPressedEvent = _backButtonPressedEvent.asSharedFlow()
+
+    fun setLongClickMode(boolean: Boolean) {
+        _isLongClickModeFlow.value = boolean
+    }
 
     fun fabClick() {
         viewModelScope.launch {

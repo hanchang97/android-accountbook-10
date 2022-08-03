@@ -46,6 +46,11 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun provideDeleteHistoryUseCase(historyRepository: HistoryRepository) =
+        DeleteHistoryUseCase(historyRepository)
+
+    @Singleton
+    @Provides
     fun provideGetAllHistoryByYearAndMonthUseCase(historyRepository: HistoryRepository) =
         GetAllHistoryByYearAndMonthUseCase(historyRepository)
 

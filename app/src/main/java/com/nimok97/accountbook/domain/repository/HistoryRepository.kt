@@ -7,4 +7,5 @@ interface HistoryRepository {
     suspend fun addHistory(historyDao: HistoryDao): Result<Long>
     suspend fun getAllHistory(year: Int, month: Int): Result<List<History>>
     suspend fun updateHistory(id: Int, historyDao: HistoryDao): Result<Int>
+    suspend fun deleteHistory(id: Int): Result<Int>
 }

@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nimok97.accountbook.R
+import com.nimok97.accountbook.common.getCurrentHistoryDateString
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
 import com.nimok97.accountbook.databinding.FragmentHistoryBinding
@@ -76,7 +77,7 @@ class HistoryFragment : Fragment() {
         setRecyclerView()
         collectData()
 
-        historyViewModel.getHistoryItemList(2022, 7)
+        historyViewModel.getHistoryItemList(mainViewModel.currentYear, mainViewModel.currentMonth)
     }
 
     private fun setAppBar() {
@@ -87,12 +88,24 @@ class HistoryFragment : Fragment() {
 
     private fun setRecyclerView() {
         historyItemAdapter = HistoryItemAdapter({
+            // 일반 모드에서 아이템 선택 -> 수정 화면
             historyViewModel.selectedHistoryForEdit = it
             mainViewModel.moveToEditHistoryFragment()
+        }, { pos, id ->
+            printLog("history item long clicked")
+            historyItemAdapter.enableLongClickMode(pos)
+            mainViewModel.setLongClickMode(true)
+            historyViewModel.addOrRemoveDeleteId(id)
         }, {
-
-        }, {
-
+            // 롱클릭 모드에서 아이템 클릭 시
+                id ->
+            if (historyViewModel.addOrRemoveDeleteId(id) > 0) {
+                binding.customAppBar.setTitle("${historyViewModel.deleteIdSet.size}개 선택")
+            } else { // 선택된 아이템 0개
+                mainViewModel.setLongClickMode(false)
+                historyItemAdapter.disableLongClickMode()
+                historyViewModel.deleteIdSet.clear()
+            }
         })
         binding.rvHistory.apply {
             adapter = historyItemAdapter
@@ -101,6 +114,8 @@ class HistoryFragment : Fragment() {
     }
 
     private fun collectData() {
+        collectLongClikModeData()
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 historyViewModel.historyItemListFlow.collect {
@@ -124,15 +139,90 @@ class HistoryFragment : Fragment() {
         }
     }
 
+    private fun collectLongClikModeData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.isLongClickModeFlow.collect {
+                    if (it) {
+                        with(binding.customAppBar) {
+                            setTitle("1개 선택")
+                            setLeftImage(R.drawable.ic_back)
+                            setRightImage(R.drawable.ic_trash)
+                        }
+                    } else {
+                        with(binding.customAppBar) {
+                            setTitle(
+                                getCurrentHistoryDateString(
+                                    mainViewModel.currentYear,
+                                    mainViewModel.currentMonth
+                                )
+                            )
+                            setLeftImage(R.drawable.ic_left)
+                            setRightImage(R.drawable.ic_right)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     inner class LeftListener : CustomAppBar.LeftImageClickListener {
         override fun clickLeft(view: View) {
-            printLog("left clicked")
+            if (mainViewModel.isLongClickModeFlow.value) {
+                // 롱클릭 모드 해제하기
+                mainViewModel.setLongClickMode(false)
+                historyItemAdapter.disableLongClickMode()
+                historyViewModel.deleteIdSet.clear()
+            } else {
+                printLog("Long click mode disabled : left clicked")
+                if (mainViewModel.currentMonth > 1) {
+                    mainViewModel.currentMonth -= 1
+                } else {
+                    mainViewModel.currentMonth = 12
+                    mainViewModel.currentYear -= 1
+                }
+                historyViewModel.getHistoryItemList(
+                    mainViewModel.currentYear,
+                    mainViewModel.currentMonth
+                )
+                binding.customAppBar.setTitle(
+                    getCurrentHistoryDateString(
+                        mainViewModel.currentYear,
+                        mainViewModel.currentMonth
+                    )
+                )
+            }
         }
     }
 
     inner class RightListener : CustomAppBar.RightImageClickListener {
         override fun clickRight(view: View) {
-            printLog("right clicked")
+            if (mainViewModel.isLongClickModeFlow.value) {
+                // 선택된 아이템들 삭제 후 롱클릭 모드 해제하기
+                historyViewModel.deleteHistories(
+                    mainViewModel.currentYear,
+                    mainViewModel.currentMonth
+                )
+                mainViewModel.setLongClickMode(false)
+            } else {
+                printLog("Long click mode disabled : right clicked")
+                if (mainViewModel.currentMonth < 12) {
+                    mainViewModel.currentMonth += 1
+                } else {
+                    mainViewModel.currentMonth = 1
+                    mainViewModel.currentYear += 1
+                }
+                historyViewModel.getHistoryItemList(
+                    mainViewModel.currentYear,
+                    mainViewModel.currentMonth
+                )
+                binding.customAppBar.setTitle(
+                    getCurrentHistoryDateString(
+                        mainViewModel.currentYear,
+                        mainViewModel.currentMonth
+                    )
+                )
+            }
         }
     }
 }

@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setCurrentDate(){
-        calculateCurrentYear()
-        calculateCurrentMonth()
+        mainViewModel.currentYear = calculateCurrentYear()
+        mainViewModel.currentMonth = calculateCurrentMonth()
     }
 
     private fun setBottomNavigation() {

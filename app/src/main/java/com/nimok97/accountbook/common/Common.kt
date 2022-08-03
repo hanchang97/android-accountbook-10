@@ -10,3 +10,6 @@ val defaultDateString = "날짜를 선택하세요"
 
 fun getDateString(year: Int, month: Int, dayNum: Int, dayStr: String) =
     "$year. $month. $dayNum ${dayStr}요일"
+
+fun getCurrentHistoryDateString(year: Int, month: Int) =
+    "${year}년 ${month}월"
