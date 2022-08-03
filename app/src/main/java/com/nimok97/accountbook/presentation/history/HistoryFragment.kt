@@ -89,9 +89,9 @@ class HistoryFragment : Fragment() {
         historyItemAdapter = HistoryItemAdapter({
             historyViewModel.selectedHistoryForEdit = it
             mainViewModel.moveToEditHistoryFragment()
-        }, {
+        }, { pos, id ->
             printLog("history item long clicked")
-
+            historyItemAdapter.enableLongClickMode(pos)
         }, {
 
         })

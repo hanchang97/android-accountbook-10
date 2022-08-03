@@ -15,7 +15,7 @@ import com.nimok97.accountbook.domain.model.HistoryItem
 
 class HistoryItemAdapter(
     private val contentClick: (history: History) -> Unit,
-    private val contentLongClick: () -> Unit,
+    private val contentLongClick: (pos: Int, id: Int) -> Unit,
     private val checkContent: (id: Int) -> Unit
 ) :
     ListAdapter<HistoryItem, RecyclerView.ViewHolder>(HistoryItemDiffUtil) {
@@ -41,7 +41,7 @@ class HistoryItemAdapter(
         fun bind(
             historyItem: HistoryItem,
             contentClick: (history: History) -> Unit,
-            contentLongClick: () -> Unit
+            contentLongClick: (pos: Int, id: Int) -> Unit
         ) {
             binding.history = historyItem.history
             binding.category = historyItem.category
@@ -57,6 +57,14 @@ class HistoryItemAdapter(
                 }
             }
 
+            historyItem.isCheckVisible?.let {
+                binding.cbDelete.isVisible = it
+            }
+
+            historyItem.isChecked?.let {
+                binding.cbDelete.isChecked = it
+            }
+            
             binding.root.setOnClickListener {
                 historyItem.isLongClickMode?.let {
                     if (!it) {
@@ -73,7 +81,11 @@ class HistoryItemAdapter(
             }
 
             binding.root.setOnLongClickListener(View.OnLongClickListener {
-                contentLongClick.invoke()
+                historyItem.isLongClickMode?.let {
+                    if (!it) {
+                        contentLongClick.invoke(adapterPosition, historyItem.history!!.id)
+                    }
+                }
                 return@OnLongClickListener true
             })
         }
@@ -112,6 +124,28 @@ class HistoryItemAdapter(
             }
         }
     }
+
+    fun enableLongClickMode(pos: Int) {
+        val newList = ArrayList<HistoryItem>()
+        currentList.forEachIndexed { index, historyItem ->
+            newList.add(
+                HistoryItem(
+                    viewType = historyItem.viewType,
+                    history = (if (historyItem.history != null) historyItem.history!!.copy() else null),
+                    category = (if (historyItem.category != null) historyItem.category!!.copy() else null),
+                    method = (if (historyItem.method != null) historyItem.method!!.copy() else null),
+                    isLastItem = historyItem.isLastItem,
+                    isCheckVisible = (pos == index),
+                    isChecked = (pos == index),
+                    income = historyItem.income,
+                    expenditure = historyItem.expenditure,
+                    isLongClickMode = true
+                )
+            )
+        }
+        submitList(newList.toList())
+    }
+
 
     companion object HistoryItemDiffUtil : DiffUtil.ItemCallback<HistoryItem>() {
 
