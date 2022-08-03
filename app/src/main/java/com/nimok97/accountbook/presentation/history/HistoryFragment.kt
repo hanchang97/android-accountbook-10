@@ -77,7 +77,7 @@ class HistoryFragment : Fragment() {
         setRecyclerView()
         collectData()
 
-        historyViewModel.getHistoryItemList(2022, 7)
+        historyViewModel.getHistoryItemList(mainViewModel.currentYear, mainViewModel.currentMonth)
     }
 
     private fun setAppBar() {
@@ -175,6 +175,22 @@ class HistoryFragment : Fragment() {
                 historyViewModel.deleteIdSet.clear()
             } else {
                 printLog("Long click mode disabled : left clicked")
+                if (mainViewModel.currentMonth > 1) {
+                    mainViewModel.currentMonth -= 1
+                } else {
+                    mainViewModel.currentMonth = 12
+                    mainViewModel.currentYear -= 1
+                }
+                historyViewModel.getHistoryItemList(
+                    mainViewModel.currentYear,
+                    mainViewModel.currentMonth
+                )
+                binding.customAppBar.setTitle(
+                    getCurrentHistoryDateString(
+                        mainViewModel.currentYear,
+                        mainViewModel.currentMonth
+                    )
+                )
             }
         }
     }
@@ -183,9 +199,29 @@ class HistoryFragment : Fragment() {
         override fun clickRight(view: View) {
             if (mainViewModel.isLongClickModeFlow.value) {
                 // 선택된 아이템들 삭제 후 롱클릭 모드 해제하기
-                historyViewModel.deleteHistories()
+                historyViewModel.deleteHistories(
+                    mainViewModel.currentYear,
+                    mainViewModel.currentMonth
+                )
+                mainViewModel.setLongClickMode(false)
             } else {
                 printLog("Long click mode disabled : right clicked")
+                if (mainViewModel.currentMonth < 12) {
+                    mainViewModel.currentMonth += 1
+                } else {
+                    mainViewModel.currentMonth = 1
+                    mainViewModel.currentYear += 1
+                }
+                historyViewModel.getHistoryItemList(
+                    mainViewModel.currentYear,
+                    mainViewModel.currentMonth
+                )
+                binding.customAppBar.setTitle(
+                    getCurrentHistoryDateString(
+                        mainViewModel.currentYear,
+                        mainViewModel.currentMonth
+                    )
+                )
             }
         }
     }

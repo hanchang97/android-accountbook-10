@@ -20,4 +20,8 @@ class HistoryRepositoryImpl(
     override suspend fun updateHistory(id: Int, historyDao: HistoryDao): Result<Int> {
         return accountBookDataSource.updateHistory(id, historyDao)
     }
+
+    override suspend fun deleteHistory(id: Int): Result<Int> {
+        return accountBookDataSource.deleteHistory(id)
+    }
 }

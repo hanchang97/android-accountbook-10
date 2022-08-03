@@ -6,10 +6,7 @@ import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
 import com.nimok97.accountbook.domain.model.History
 import com.nimok97.accountbook.domain.model.HistoryItem
-import com.nimok97.accountbook.domain.usecase.AddHistoryUseCase
-import com.nimok97.accountbook.domain.usecase.GetAllHistoryByYearAndMonthUseCase
-import com.nimok97.accountbook.domain.usecase.GetCategoryByIdUseCase
-import com.nimok97.accountbook.domain.usecase.GetMethodByIdUseCase
+import com.nimok97.accountbook.domain.usecase.*
 import com.nimok97.accountbook.presentation.util.CATEGORY_EXPENDITURE
 import com.nimok97.accountbook.presentation.util.CATEGORY_INCOME
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +22,8 @@ class HistoryViewModel @Inject constructor(
     private val addHistoryUseCase: AddHistoryUseCase,
     private val getAllHistoryByYearAndMonthUseCase: GetAllHistoryByYearAndMonthUseCase,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
-    private val getMethodByIdUseCase: GetMethodByIdUseCase
+    private val getMethodByIdUseCase: GetMethodByIdUseCase,
+    private val deleteHistoryUseCase: DeleteHistoryUseCase
 ) : ViewModel() {
 
     private val _errorEvent = MutableSharedFlow<Boolean>()
@@ -56,7 +54,7 @@ class HistoryViewModel @Inject constructor(
     val deleteIdSet = mutableSetOf<Int>()
 
     fun addOrRemoveDeleteId(id: Int): Int {
-        if(deleteIdSet.contains(id)) deleteIdSet.remove(id)
+        if (deleteIdSet.contains(id)) deleteIdSet.remove(id)
         else deleteIdSet.add(id)
         return deleteIdSet.size
     }
@@ -76,6 +74,11 @@ class HistoryViewModel @Inject constructor(
                     resultList?.let {
                         if (it.isEmpty()) {
                             printLog("수입/지출 내역이 없습니다")
+                            withContext(Dispatchers.Main) {
+                                _incomeTotalFlow.value = 0
+                                _expenditureTotalFlow.value = 0
+                                _emptyEvent.emit(true)
+                            }
                         } else {
                             var incomeTotalTemp = 0
                             var expenditureTotalTemp = 0
@@ -164,17 +167,17 @@ class HistoryViewModel @Inject constructor(
 
     suspend fun convertHistoryItemList(tempList: List<HistoryItem>) {
         _emptyEvent.emit(false)
-        val historyItemList = mutableListOf<HistoryItem>()
+        val historyItemListConverted = mutableListOf<HistoryItem>()
         var sumIncome = 0
         var sumExpenditure = 0
         var headerInx = 0
         tempList.forEachIndexed { index, historyItem ->
             if (index == 0) {
-                historyItemList.add(HistoryItem("header", historyItem.history))
+                historyItemListConverted.add(HistoryItem("header", historyItem.history))
             }
 
             if (index == tempList.size - 1) {
-                historyItemList.add(
+                historyItemListConverted.add(
                     HistoryItem(
                         "content",
                         historyItem.history,
@@ -189,8 +192,8 @@ class HistoryViewModel @Inject constructor(
                     else -> sumExpenditure += historyItem.history!!.amount
                 }
 
-                historyItemList.get(headerInx).income = sumIncome
-                historyItemList.get(headerInx).expenditure = sumExpenditure
+                historyItemListConverted.get(headerInx).income = sumIncome
+                historyItemListConverted.get(headerInx).expenditure = sumExpenditure
             } else {
                 val curDay = historyItem.history!!.dayNum
                 val nextDay = tempList[index + 1].history!!.dayNum
@@ -202,37 +205,50 @@ class HistoryViewModel @Inject constructor(
 
                 if (curDay == nextDay) {
                     printLog("$curDay $nextDay")
-                    historyItemList.add(historyItem)
+                    historyItemListConverted.add(historyItem)
                 } else { // 다음 원소 값으로 헤더 넣어주기
-                    historyItemList.add(
+                    historyItemListConverted.add(
                         HistoryItem(
                             "content", historyItem.history, historyItem.category,
                             historyItem.method, true
                         )
                     )
 
-                    historyItemList.get(headerInx).income = sumIncome
-                    historyItemList.get(headerInx).expenditure = sumExpenditure
+                    historyItemListConverted.get(headerInx).income = sumIncome
+                    historyItemListConverted.get(headerInx).expenditure = sumExpenditure
                     sumIncome = 0
                     sumExpenditure = 0
 
-                    historyItemList.add(HistoryItem("header", tempList[index + 1].history))
-                    headerInx = historyItemList.size - 1
+                    historyItemListConverted.add(HistoryItem("header", tempList[index + 1].history))
+                    headerInx = historyItemListConverted.size - 1
                 }
             }
         }
 
         printLog("데이터 조회 및 사용가능 형태로 변환")
-        historyItemList.forEach {
+        historyItemListConverted.forEach {
             printLog("$it")
         }
 
         withContext(Dispatchers.Main) {
-            _historyItemListFlow.value = historyItemList
+            if (historyItemListConverted.size == 0) {
+                _emptyEvent.emit(true)
+            }
+            _historyItemListFlow.value = historyItemListConverted
         }
     }
 
-    fun deleteHistories() {
+    fun deleteHistories(year: Int, month: Int) {
         printLog("$deleteIdSet")
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteIdSet.map {
+                async {
+                    val result = deleteHistoryUseCase.deleteHistory(it)
+                }
+            }.awaitAll()
+
+            getHistoryItemList(year, month)
+            deleteIdSet.clear()
+        }
     }
 }
