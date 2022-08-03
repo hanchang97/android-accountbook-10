@@ -30,6 +30,8 @@ class StatisticsFragment : Fragment() {
     ): View? {
         printLog("${this.javaClass.simpleName} / onCreateView")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_statistics, container, false)
+        binding.statisticsViewModel = statisticsViewModel
+        binding.lifecycleOwner = this.viewLifecycleOwner
         return binding.root
     }
 
@@ -61,6 +63,7 @@ class StatisticsFragment : Fragment() {
 
     private fun setData() {
         statisticsViewModel.setYearAndMonth(mainViewModel.currentYear, mainViewModel.currentMonth)
+        statisticsViewModel.getHistoryitemList()
     }
 
     inner class LeftListener : CustomAppBar.LeftImageClickListener {
@@ -72,6 +75,7 @@ class StatisticsFragment : Fragment() {
                 mainViewModel.currentYear -= 1
             }
             setAppBarTitle()
+            setData()
         }
     }
 
@@ -84,6 +88,7 @@ class StatisticsFragment : Fragment() {
                 mainViewModel.currentYear += 1
             }
             setAppBarTitle()
+            setData()
         }
     }
 }

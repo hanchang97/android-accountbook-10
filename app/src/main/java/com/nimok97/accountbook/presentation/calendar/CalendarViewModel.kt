@@ -94,10 +94,6 @@ class CalendarViewModel @Inject constructor(
             }
         }
 
-        _incomeTotalFlow.value = incomeTotal
-        _expenditureTotalFlow.value = expenditureTotal
-        _totalFlow.value = incomeTotal - expenditureTotal
-
         (1..preDayCount).forEach {
             calendarList.add(
                 0, CalendarData(
@@ -119,6 +115,9 @@ class CalendarViewModel @Inject constructor(
         }
 
         withContext(Dispatchers.Main) {
+            _incomeTotalFlow.value = incomeTotal
+            _expenditureTotalFlow.value = expenditureTotal
+            _totalFlow.value = incomeTotal - expenditureTotal
             _calendarDataListFlow.value = calendarList
         }
     }
