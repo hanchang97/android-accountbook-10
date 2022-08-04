@@ -13,6 +13,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor() : ViewModel() {
 
+    var todayYear = 2022
+    var todayMonth = 1
+    var todayDay = 1
+
     var currentYear = 2022
     var currentMonth = 1
     var currentDay = 1

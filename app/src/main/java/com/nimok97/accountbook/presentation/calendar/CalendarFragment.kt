@@ -100,7 +100,11 @@ class CalendarFragment : Fragment() {
     }
 
     private fun setRecyclerView() {
-        calendarDataItemAdapter = CalendarDataItemAdapter()
+        calendarDataItemAdapter = CalendarDataItemAdapter(
+            mainViewModel.todayYear,
+            mainViewModel.todayMonth,
+            mainViewModel.todayDay
+        )
         binding.rvCalendar.apply {
             adapter = calendarDataItemAdapter
             layoutManager = GridLayoutManager(requireContext(), 7)

@@ -32,7 +32,7 @@ fun calculateCurrentDay(): Int {
     val dayFormat = SimpleDateFormat("dd", Locale.KOREAN)
     val dayStr = dayFormat.format(currentTime)
 
-    printLog("current month : ${dayStr.toInt()}")
+    printLog("current day : ${dayStr.toInt()}")
     return dayStr.toInt()
 }
 
