@@ -9,14 +9,11 @@ import com.nimok97.accountbook.domain.usecase.GetAllHistoryByYearAndMonthUseCase
 import com.nimok97.accountbook.domain.usecase.GetCategoryByIdUseCase
 import com.nimok97.accountbook.presentation.util.CATEGORY_EXPENDITURE
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.round
 
@@ -32,8 +29,16 @@ class StatisticsViewModel @Inject constructor(
     private val _errorEvent = MutableSharedFlow<Boolean>()
     val errorEvent = _errorEvent.asSharedFlow()
 
+    private val _emptyEvent = MutableSharedFlow<Boolean>()
+    val emptyEvent = _emptyEvent.asSharedFlow()
+
     private val _expenditureTotalFlow = MutableStateFlow<Int>(0)
     val expenditureTotalFlow: StateFlow<Int> = _expenditureTotalFlow
+
+    private val _categoryStatisticsListFlow =
+        MutableStateFlow<List<CategoryStatistics>>(emptyList())
+    val categoryStatisticsListFlow: StateFlow<List<CategoryStatistics>> =
+        _categoryStatisticsListFlow
 
     var historyExpenditureItemList = listOf<History>()
 
@@ -100,8 +105,10 @@ class StatisticsViewModel @Inject constructor(
                         result.isSuccess -> {
                             result.getOrNull()?.let {
                                 categoryStatisticsList.add(
-                                    CategoryStatistics(categoryId, it.content, it.color, amount,
-                                    round(amount.toFloat() / total * 100) / 100)
+                                    CategoryStatistics(
+                                        categoryId, it.content, it.color, amount,
+                                        round(amount.toFloat() / total * 100) / 100
+                                    )
                                 )
                             }
                         }
@@ -110,8 +117,16 @@ class StatisticsViewModel @Inject constructor(
                 }
             }.awaitAll()
 
+            categoryStatisticsList.sortByDescending { it.amount }
             categoryStatisticsList.forEach {
                 printLog("$it")
+            }
+
+            withContext(Dispatchers.Main) {
+                if (categoryStatisticsList.size != 0)
+                    _categoryStatisticsListFlow.value = categoryStatisticsList
+                else
+                    _emptyEvent.emit(true)
             }
         }
     }

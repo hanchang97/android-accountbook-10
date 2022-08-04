@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="statisticsViewModel"
             type="com.nimok97.accountbook.presentation.statistics.StatisticsViewModel" />
@@ -51,6 +52,7 @@
             app:layout_constraintTop_toBottomOf="@id/customAppBar" />
 
         <TextView
+            calendarTotalIncomePrice="@{statisticsViewModel.expenditureTotalFlow}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/kopubworld_dotum_pro_bold"
@@ -59,8 +61,7 @@
             app:layout_constraintBottom_toBottomOf="@id/tv_expenditure_description"
             app:layout_constraintEnd_toEndOf="@id/gl_end"
             app:layout_constraintTop_toTopOf="@id/tv_expenditure_description"
-            tools:text="834,640"
-            calendarTotalIncomePrice="@{statisticsViewModel.expenditureTotalFlow}"/>
+            tools:text="834,640" />
 
         <View
             android:id="@+id/view_divider_top"
@@ -70,7 +71,28 @@
             android:background="@color/primary_light_purple"
             app:layout_constraintTop_toBottomOf="@id/tv_expenditure_description" />
 
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintDimensionRatio="360:290"
+            app:layout_constraintTop_toBottomOf="@id/view_divider_top" />
 
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/composeView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/view_bottom"
+            app:layout_constraintTop_toBottomOf="@id/pieChart" />
+
+        <View
+            android:id="@+id/view_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="30dp"
+            android:background="@color/primary_light_purple"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
