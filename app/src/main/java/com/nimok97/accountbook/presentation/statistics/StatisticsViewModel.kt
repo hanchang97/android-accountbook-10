@@ -29,8 +29,8 @@ class StatisticsViewModel @Inject constructor(
     private val _errorEvent = MutableSharedFlow<Boolean>()
     val errorEvent = _errorEvent.asSharedFlow()
 
-    private val _emptyEvent = MutableSharedFlow<Boolean>()
-    val emptyEvent = _emptyEvent.asSharedFlow()
+    private val _emptyEvent = MutableStateFlow<Boolean>(false)
+    val emptyEvent: StateFlow<Boolean> = _emptyEvent
 
     private val _expenditureTotalFlow = MutableStateFlow<Int>(0)
     val expenditureTotalFlow: StateFlow<Int> = _expenditureTotalFlow
@@ -123,10 +123,12 @@ class StatisticsViewModel @Inject constructor(
             }
 
             withContext(Dispatchers.Main) {
-                if (categoryStatisticsList.size != 0)
+                if (categoryStatisticsList.size != 0) {
+                    _emptyEvent.value = false
                     _categoryStatisticsListFlow.value = categoryStatisticsList
-                else
-                    _emptyEvent.emit(true)
+                } else {
+                    _emptyEvent.value = true
+                }
             }
         }
     }
