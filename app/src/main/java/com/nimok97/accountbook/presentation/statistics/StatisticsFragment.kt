@@ -1,11 +1,29 @@
 package com.nimok97.accountbook.presentation.statistics
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.Divider
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -21,10 +39,14 @@ import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.getCurrentHistoryDateString
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.FragmentStatisticsBinding
+import com.nimok97.accountbook.domain.model.CategoryStatistics
 import com.nimok97.accountbook.presentation.MainViewModel
+import com.nimok97.accountbook.presentation.theme.*
 import com.nimok97.accountbook.presentation.util.CustomAppBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
+import kotlin.math.floor
 
 @AndroidEntryPoint
 class StatisticsFragment : Fragment() {
@@ -54,6 +76,7 @@ class StatisticsFragment : Fragment() {
     private fun initView() {
         setAppBarTitle()
         setAppBarListener()
+        setComposeView()
         setData()
         setPieChartOption()
         setPieChartData()
@@ -120,12 +143,103 @@ class StatisticsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 statisticsViewModel.emptyEvent.collect {
-                    if(it) {
+                    if (it) {
                         // 지출 내역 없습니다 문구 나타내기
 
                     }
                 }
             }
+        }
+    }
+
+    private fun setComposeView() {
+        binding.composeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                Surface(
+                    color = Primary_off_white,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CategoryList()
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun CategoryList() {
+        val categoryListState =
+            statisticsViewModel.categoryStatisticsListFlow.collectAsState().value
+        LazyColumn() {
+            items(categoryListState) { categoryStatistics ->
+                CategoryItem(categoryStatistics)
+            }
+        }
+    }
+
+    @Composable
+    fun CategoryItem(categoryStatistics: CategoryStatistics) {
+        val intColor = android.graphics.Color.parseColor(categoryStatistics.color)
+        val decimalFormat = DecimalFormat("#,###")
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, 0.dp)
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Card(
+                    shape = RoundedCornerShape(50),
+                    backgroundColor = Color(intColor),
+                    elevation = 0.dp
+                ) {
+                    Text(
+                        text = categoryStatistics.content,
+                        modifier = Modifier
+                            .defaultMinSize(56.dp, 0.dp)
+                            .padding(4.dp),
+                        style = TextStyle(
+                            color = White,
+                            fontFamily = kopubworld_dotum_pro,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        fontSize = 10.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = decimalFormat.format(categoryStatistics.amount),
+                    style = TextStyle(
+                        color = Primary_purple,
+                        fontFamily = kopubworld_dotum_pro,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    fontSize = 14.sp
+                )
+                Text(
+                    text = "${(floor(categoryStatistics.percent * 100)).toInt()}%",
+                    style = TextStyle(
+                        color = Primary_purple,
+                        fontFamily = kopubworld_dotum_pro,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    fontSize = 14.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp),
+                color = Primary_purple_40
+            )
         }
     }
 
