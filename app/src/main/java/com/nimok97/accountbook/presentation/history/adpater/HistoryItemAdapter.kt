@@ -1,4 +1,4 @@
-package com.nimok97.accountbook.presentation.history
+package com.nimok97.accountbook.presentation.history.adpater
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nimok97.accountbook.R
+import com.nimok97.accountbook.common.HISTORY_CONTENT
+import com.nimok97.accountbook.common.HISTORY_HEADER
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.ItemHistoryContentBinding
 import com.nimok97.accountbook.databinding.ItemHistoryHeaderBinding
@@ -24,8 +26,9 @@ class HistoryItemAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position).viewType) {
-            "header" -> 1
-            else -> 2
+            HISTORY_HEADER -> 1
+            HISTORY_CONTENT -> 2
+            else -> 3
         }
     }
 
