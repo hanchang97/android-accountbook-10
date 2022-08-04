@@ -13,6 +13,7 @@ import com.nimok97.accountbook.common.HISTORY_CONTENT
 import com.nimok97.accountbook.common.HISTORY_HEADER
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.databinding.ItemHistoryContentBinding
+import com.nimok97.accountbook.databinding.ItemHistoryFooterBinding
 import com.nimok97.accountbook.databinding.ItemHistoryHeaderBinding
 import com.nimok97.accountbook.domain.model.History
 import com.nimok97.accountbook.domain.model.HistoryItem
@@ -39,6 +40,11 @@ class HistoryItemAdapter(
             binding.tvAmountIncome.text = historyItem.income.toString()
             binding.tvAmountExpenditure.text = historyItem.expenditure.toString()
         }
+    }
+
+    inner class FooterViewHolder(val binding: ItemHistoryFooterBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind() {}
     }
 
     inner class ContentViewHolder(val binding: ItemHistoryContentBinding) :
@@ -87,18 +93,27 @@ class HistoryItemAdapter(
                 historyItem.isLongClickMode?.let {
                     if (it) { // 롱클릭 모드
                         getItem(adapterPosition).isCheckVisible?.let {
-                            if(it) { // 선택 -> 미선택
+                            if (it) { // 선택 -> 미선택
                                 getItem(adapterPosition).isCheckVisible = false
                                 getItem(adapterPosition).isChecked = false
                                 binding.cbDelete.isVisible = false
-                                binding.root.setBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.primary_off_white))
-                            }
-                            else {
+                                binding.root.setBackgroundColor(
+                                    ContextCompat.getColor(
+                                        binding.root.context,
+                                        R.color.primary_off_white
+                                    )
+                                )
+                            } else {
                                 getItem(adapterPosition).isCheckVisible = true
                                 getItem(adapterPosition).isChecked = true
                                 binding.cbDelete.isVisible = true
                                 binding.cbDelete.isChecked = true
-                                binding.root.setBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.white))
+                                binding.root.setBackgroundColor(
+                                    ContextCompat.getColor(
+                                        binding.root.context,
+                                        R.color.white
+                                    )
+                                )
                             }
                             checkContent.invoke(historyItem.history!!.id) // 선택한 내역 id 전달
                         }
@@ -137,7 +152,7 @@ class HistoryItemAdapter(
                     )
                 return HeaderViewHolder(binding)
             }
-            else -> {
+            2 -> {
                 val binding =
                     ItemHistoryContentBinding.inflate(
                         LayoutInflater.from(parent.context),
@@ -145,6 +160,15 @@ class HistoryItemAdapter(
                         false
                     )
                 return ContentViewHolder(binding)
+            }
+            else -> {
+                val binding =
+                    ItemHistoryFooterBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                return FooterViewHolder(binding)
             }
         }
     }
@@ -156,6 +180,9 @@ class HistoryItemAdapter(
             }
             is ContentViewHolder -> {
                 holder.bind(getItem(position), contentClick, contentLongClick, checkContent)
+            }
+            is FooterViewHolder -> {
+                holder.bind()
             }
         }
     }
@@ -206,7 +233,7 @@ class HistoryItemAdapter(
     companion object HistoryItemDiffUtil : DiffUtil.ItemCallback<HistoryItem>() {
 
         override fun areItemsTheSame(oldItem: HistoryItem, newItem: HistoryItem) =
-            oldItem.history!!.id == newItem.history!!.id
+            (oldItem.history!!.id == newItem.history!!.id && oldItem.viewType == newItem.viewType)
 
         override fun areContentsTheSame(oldItem: HistoryItem, newItem: HistoryItem) =
             oldItem == newItem

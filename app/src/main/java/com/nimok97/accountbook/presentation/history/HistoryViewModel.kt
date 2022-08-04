@@ -3,6 +3,7 @@ package com.nimok97.accountbook.presentation.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nimok97.accountbook.common.HISTORY_CONTENT
+import com.nimok97.accountbook.common.HISTORY_FOOTER
 import com.nimok97.accountbook.common.HISTORY_HEADER
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
@@ -221,11 +222,23 @@ class HistoryViewModel @Inject constructor(
                     sumIncome = 0
                     sumExpenditure = 0
 
-                    historyItemListConverted.add(HistoryItem(HISTORY_HEADER, tempList[index + 1].history))
+                    historyItemListConverted.add(
+                        HistoryItem(
+                            HISTORY_HEADER,
+                            tempList[index + 1].history
+                        )
+                    )
                     headerInx = historyItemListConverted.size - 1
                 }
             }
         }
+
+        historyItemListConverted.add(
+            HistoryItem(
+                HISTORY_FOOTER,
+                History(-1, -1, -1, -1, -1, "", -1, "", -1, -1)
+            )
+        )
 
         printLog("데이터 조회 및 사용가능 형태로 변환")
         historyItemListConverted.forEach {
@@ -233,7 +246,7 @@ class HistoryViewModel @Inject constructor(
         }
 
         withContext(Dispatchers.Main) {
-            if (historyItemListConverted.size == 0) {
+            if (historyItemListConverted.size == 1) {
                 _emptyEvent.emit(true)
             }
             _historyItemListFlow.value = historyItemListConverted
