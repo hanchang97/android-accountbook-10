@@ -46,8 +46,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun initView() {
         setBottomNavigation()
+        setTodayDate()
         setCurrentDate()
         changeTab(0, HistoryFragment(), R.id.fragment_history)
+    }
+
+    private fun setTodayDate() {
+        mainViewModel.todayYear = calculateCurrentYear()
+        mainViewModel.todayMonth = calculateCurrentMonth()
+        mainViewModel.todayDay = calculateCurrentDay()
     }
 
     private fun setCurrentDate() {
