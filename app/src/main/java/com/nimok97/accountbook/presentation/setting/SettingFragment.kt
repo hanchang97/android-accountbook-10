@@ -39,6 +39,8 @@ import com.nimok97.accountbook.domain.model.Category
 import com.nimok97.accountbook.domain.model.Method
 import com.nimok97.accountbook.presentation.MainViewModel
 import com.nimok97.accountbook.presentation.theme.*
+import com.nimok97.accountbook.presentation.util.CATEGORY_EXPENDITURE
+import com.nimok97.accountbook.presentation.util.CATEGORY_INCOME
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -258,6 +260,17 @@ class SettingFragment : Fragment() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, 0.dp)
+                .clickable {
+                    settingViewModel.selectedCategoryForEdit = category
+                    when(category.type) {
+                        CATEGORY_EXPENDITURE -> {
+                            mainViewModel.moveToEditExpenditureCategoryFragment()
+                        }
+                        else -> {
+                            // 수입 수정 이동
+                        }
+                    }
+                }
         ) {
             Spacer(modifier = Modifier.height(11.dp))
             Row(

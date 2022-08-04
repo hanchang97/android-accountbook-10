@@ -8,4 +8,5 @@ interface CategoryRepository {
     suspend fun getAllCategory(): Result<List<Category>>
     suspend fun getCategoryById(categoryId: Int): Result<Category>
     suspend fun checkCategoryExistenceByContent(content: String): Result<Boolean>
+    suspend fun updateCategory(id: Int, categoryDao: CategoryDao): Result<Int>
 }

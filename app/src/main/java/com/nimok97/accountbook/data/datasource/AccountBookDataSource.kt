@@ -213,6 +213,25 @@ class AccountBookDataSource(private val dbHelper: DBHelper) {
         return Result.failure(Throwable("db error"))
     }
 
+    suspend fun updateCategory(id: Int, categoryDao: CategoryDao): Result<Int> {
+        runCatching {
+            val db = dbHelper.writableDatabase
+            val value = ContentValues().apply {
+                put(CategoryDBStructure.COLUMN_TYPE, categoryDao.type)
+                put(CategoryDBStructure.COLUMN_CONTENT, categoryDao.content)
+                put(CategoryDBStructure.COLUMN_COLOR, categoryDao.color)
+            }
+            val upadateWhere = "${CategoryDBStructure.COLUMN_ID} = ?"
+            val updateWhereArgs = arrayOf("$id")
+            db.update(CategoryDBStructure.TABLE_NAME, value, upadateWhere, updateWhereArgs)
+        }.onSuccess {
+            return Result.success(it)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Throwable("db error"))
+    }
+
     suspend fun checkCategoryExistenceByContent(content: String): Result<Boolean> { // 결제 수단 추가 시 중복체크 위함
         runCatching {
             var db = dbHelper.readableDatabase

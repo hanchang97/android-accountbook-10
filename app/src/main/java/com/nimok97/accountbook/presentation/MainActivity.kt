@@ -18,6 +18,7 @@ import com.nimok97.accountbook.presentation.history.manage.add.AddHistoryFragmen
 import com.nimok97.accountbook.presentation.history.manage.edit.EditHistoryFragment
 import com.nimok97.accountbook.presentation.setting.SettingFragment
 import com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCategoryFragment
+import com.nimok97.accountbook.presentation.setting.expenditure.edit.EditExpenditureCategoryFragment
 import com.nimok97.accountbook.presentation.setting.method.MethodFragment
 import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
 import com.nimok97.accountbook.presentation.util.FragmentStackManager
@@ -162,6 +163,18 @@ class MainActivity : AppCompatActivity() {
                         val expenditureCategoryFragmentTest = ExpenditureCategoryFragment()
                         FragmentStackManager.pushStack(3, expenditureCategoryFragmentTest)
                         changeFragment(expenditureCategoryFragmentTest)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.moveToEditExpenditureCategoryFragmentEvent.collect {
+                    if (it) {
+                        val editExpenditureCategoryFragment = EditExpenditureCategoryFragment()
+                        FragmentStackManager.pushStack(3, editExpenditureCategoryFragment)
+                        changeFragment(editExpenditureCategoryFragment)
                     }
                 }
             }

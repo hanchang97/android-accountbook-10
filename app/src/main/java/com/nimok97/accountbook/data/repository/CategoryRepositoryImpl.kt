@@ -24,4 +24,8 @@ class CategoryRepositoryImpl(
     override suspend fun checkCategoryExistenceByContent(content: String): Result<Boolean> {
         return accountBookDataSource.checkCategoryExistenceByContent(content)
     }
+
+    override suspend fun updateCategory(id: Int, categoryDao: CategoryDao): Result<Int> {
+        return accountBookDataSource.updateCategory(id, categoryDao)
+    }
 }

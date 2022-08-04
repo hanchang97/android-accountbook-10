@@ -39,6 +39,9 @@ class MainViewModel @Inject constructor() : ViewModel() {
     private val _moveToExpenditureCategoryFragmentEvent = MutableSharedFlow<Boolean>()
     val moveToExpenditureCategoryFragmentEvent = _moveToExpenditureCategoryFragmentEvent.asSharedFlow()
 
+    private val _moveToEditExpenditureCategoryFragmentEvent = MutableSharedFlow<Boolean>()
+    val moveToEditExpenditureCategoryFragmentEvent = _moveToEditExpenditureCategoryFragmentEvent.asSharedFlow()
+
     private val _backButtonPressedEvent = MutableSharedFlow<Boolean>()
     val backButtonPressedEvent = _backButtonPressedEvent.asSharedFlow()
 
@@ -73,6 +76,12 @@ class MainViewModel @Inject constructor() : ViewModel() {
     fun moveToExpenditureCategoryFragment() {
         viewModelScope.launch {
             _moveToExpenditureCategoryFragmentEvent.emit(true)
+        }
+    }
+
+    fun moveToEditExpenditureCategoryFragment() {
+        viewModelScope.launch {
+            _moveToEditExpenditureCategoryFragmentEvent.emit(true)
         }
     }
 

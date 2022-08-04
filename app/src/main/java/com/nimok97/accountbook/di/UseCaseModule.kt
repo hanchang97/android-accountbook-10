@@ -61,6 +61,11 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun provideUpdateCategoryUseCase(categoryRepository: CategoryRepository) =
+        UpdateCategoryUseCase(categoryRepository)
+
+    @Singleton
+    @Provides
     fun provideGetMethodByIdUseCase(methodRepository: MethodRepository) =
         GetMethodByIdUseCase(methodRepository)
 

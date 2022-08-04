@@ -1,5 +1,6 @@
-package com.nimok97.accountbook.presentation.setting.expenditure
+package com.nimok97.accountbook.presentation.setting.expenditure.edit
 
+import androidx.compose.ui.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -33,8 +33,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.nimok97.accountbook.R
 import com.nimok97.accountbook.common.printLog
-import com.nimok97.accountbook.databinding.FragmentExpenditureCategoryBinding
+import com.nimok97.accountbook.databinding.FragmentExpenditureCategoryEditBinding
 import com.nimok97.accountbook.presentation.MainViewModel
+import com.nimok97.accountbook.presentation.setting.SettingViewModel
 import com.nimok97.accountbook.presentation.theme.Category_Expenditure_Color_List
 import com.nimok97.accountbook.presentation.theme.Primary_off_white
 import com.nimok97.accountbook.presentation.util.CustomAppBar
@@ -42,11 +43,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ExpenditureCategoryFragment : Fragment() {
+class EditExpenditureCategoryFragment : Fragment() {
 
-    private lateinit var binding: FragmentExpenditureCategoryBinding
+    private lateinit var binding: FragmentExpenditureCategoryEditBinding
+    private val editExpenditureCategoryViewModel: EditExpenditureCategoryViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
-    private val expenditureCategoryViewModel: ExpenditureCategoryViewModel by viewModels()
+    private val settingViewModel: SettingViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,25 +58,38 @@ class ExpenditureCategoryFragment : Fragment() {
         printLog("${this.javaClass.simpleName} / onCreateView")
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_expenditure_category,
+            R.layout.fragment_expenditure_category_edit,
             container,
             false
         )
-        binding.expenditureCategoryViewModel = expenditureCategoryViewModel
+        binding.editExpenditureCategoryViewModel = editExpenditureCategoryViewModel
         binding.lifecycleOwner = this.viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initView()
-        collectData()
     }
 
     private fun initView() {
+        setSelectedData()
         setAppBar()
         setEditText()
         setComposeView()
+        collectData()
+    }
+
+    private fun setSelectedData() {
+        editExpenditureCategoryViewModel.curerntCategoryId =
+            settingViewModel.selectedCategoryForEdit.id
+        editExpenditureCategoryViewModel.content = settingViewModel.selectedCategoryForEdit.content
+        editExpenditureCategoryViewModel.selectedContent = settingViewModel.selectedCategoryForEdit.content
+        editExpenditureCategoryViewModel.selectedColorString =
+            settingViewModel.selectedCategoryForEdit.color
+
+        binding.etContent.setText(editExpenditureCategoryViewModel.content)
     }
 
     private fun setAppBar() {
@@ -87,57 +102,11 @@ class ExpenditureCategoryFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 printLog("${s.toString().isEmpty()}")
-                expenditureCategoryViewModel.checkContentEmpty(s.toString())
+                editExpenditureCategoryViewModel.checkContentEmpty(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
-    }
-
-    private fun changeButtonState(enable: Boolean) {
-        if (enable) {
-            binding.btnAdd.isEnabled = true
-            binding.btnAdd.backgroundTintList =
-                ContextCompat.getColorStateList(requireContext(), R.color.primary_yellow)
-        } else {
-            binding.btnAdd.isEnabled = false
-            binding.btnAdd.backgroundTintList =
-                ContextCompat.getColorStateList(requireContext(), R.color.primary_yellow_50)
-        }
-    }
-
-    private fun collectData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                expenditureCategoryViewModel.contentFlow.collect {
-                    changeButtonState(it)
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                expenditureCategoryViewModel.contentAlreadyExist.collect {
-                    if (it) Toast.makeText(requireContext(), "이미 존재하는 카테고리 입니다", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                expenditureCategoryViewModel.addCategorySuccessful.collect {
-                    if (it) {
-                        Toast.makeText(requireContext(), "지출 카테고리가 추가되었습니다", Toast.LENGTH_SHORT)
-                            .show()
-                        mainViewModel.pressBackButtonInAppBar()
-                    } else {
-                        Toast.makeText(requireContext(), "지출 카테고리 추가에 실패했습니다", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            }
-        }
     }
 
     private fun setComposeView() {
@@ -171,7 +140,8 @@ class ExpenditureCategoryFragment : Fragment() {
                 .padding(16.dp, 0.dp)
         ) {
 
-            var selectedValue = remember { mutableStateOf("#4A6CC3") }
+            var selectedValue =
+                remember { mutableStateOf(editExpenditureCategoryViewModel.selectedColorString) }
             val changeSelectedColor = { color: String -> selectedValue.value = color }
 
             LazyVerticalGrid(
@@ -191,13 +161,59 @@ class ExpenditureCategoryFragment : Fragment() {
                             )
                             .clickable {
                                 changeSelectedColor(color)
-                                expenditureCategoryViewModel.setCurrentColor(color)
+                                editExpenditureCategoryViewModel.setCurrentColor(color)
                             }
                     ) {
 
                     }
                 }
             }
+        }
+    }
+
+    private fun collectData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                editExpenditureCategoryViewModel.contentFlow.collect {
+                    changeButtonState(it)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                editExpenditureCategoryViewModel.contentAlreadyExist.collect {
+                    if (it) Toast.makeText(requireContext(), "이미 존재하는 카테고리 입니다", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                editExpenditureCategoryViewModel.updateCategorySuccessful.collect {
+                    if (it) {
+                        Toast.makeText(requireContext(), "지출 카테고리가 수정되었습니다", Toast.LENGTH_SHORT)
+                            .show()
+                        mainViewModel.pressBackButtonInAppBar()
+                    } else {
+                        Toast.makeText(requireContext(), "지출 카테고리 수정에 실패했습니다", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun changeButtonState(enable: Boolean) {
+        if (enable) {
+            binding.btnAdd.isEnabled = true
+            binding.btnAdd.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.primary_yellow)
+        } else {
+            binding.btnAdd.isEnabled = false
+            binding.btnAdd.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.primary_yellow_50)
         }
     }
 
