@@ -4,5 +4,5 @@ data class Category(
     val id: Int,
     val type: Int,
     val content: String,
-    val color: String
+    val color: String = "#000000"
 )
