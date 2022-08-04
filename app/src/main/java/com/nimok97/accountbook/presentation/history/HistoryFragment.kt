@@ -18,6 +18,7 @@ import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
 import com.nimok97.accountbook.databinding.FragmentHistoryBinding
 import com.nimok97.accountbook.presentation.MainViewModel
+import com.nimok97.accountbook.presentation.history.adpater.HistoryItemAdapter
 import com.nimok97.accountbook.presentation.util.CustomAppBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

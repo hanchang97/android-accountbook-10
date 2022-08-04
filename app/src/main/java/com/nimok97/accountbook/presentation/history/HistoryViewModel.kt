@@ -2,6 +2,9 @@ package com.nimok97.accountbook.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nimok97.accountbook.common.HISTORY_CONTENT
+import com.nimok97.accountbook.common.HISTORY_FOOTER
+import com.nimok97.accountbook.common.HISTORY_HEADER
 import com.nimok97.accountbook.common.printLog
 import com.nimok97.accountbook.data.dao.HistoryDao
 import com.nimok97.accountbook.domain.model.History
@@ -87,7 +90,7 @@ class HistoryViewModel @Inject constructor(
                             (it.indices).map {
                                 tempList[it].history = resultList[it]
                                 tempList[it].isLastItem = false
-                                tempList[it].viewType = "content"
+                                tempList[it].viewType = HISTORY_CONTENT
 
                                 when (resultList[it].type) {
                                     0 -> incomeTotalTemp += resultList[it].amount
@@ -173,13 +176,13 @@ class HistoryViewModel @Inject constructor(
         var headerInx = 0
         tempList.forEachIndexed { index, historyItem ->
             if (index == 0) {
-                historyItemListConverted.add(HistoryItem("header", historyItem.history))
+                historyItemListConverted.add(HistoryItem(HISTORY_HEADER, historyItem.history))
             }
 
             if (index == tempList.size - 1) {
                 historyItemListConverted.add(
                     HistoryItem(
-                        "content",
+                        HISTORY_CONTENT,
                         historyItem.history,
                         historyItem.category,
                         historyItem.method,
@@ -209,7 +212,7 @@ class HistoryViewModel @Inject constructor(
                 } else { // 다음 원소 값으로 헤더 넣어주기
                     historyItemListConverted.add(
                         HistoryItem(
-                            "content", historyItem.history, historyItem.category,
+                            HISTORY_CONTENT, historyItem.history, historyItem.category,
                             historyItem.method, true
                         )
                     )
@@ -219,11 +222,23 @@ class HistoryViewModel @Inject constructor(
                     sumIncome = 0
                     sumExpenditure = 0
 
-                    historyItemListConverted.add(HistoryItem("header", tempList[index + 1].history))
+                    historyItemListConverted.add(
+                        HistoryItem(
+                            HISTORY_HEADER,
+                            tempList[index + 1].history
+                        )
+                    )
                     headerInx = historyItemListConverted.size - 1
                 }
             }
         }
+
+        historyItemListConverted.add(
+            HistoryItem(
+                HISTORY_FOOTER,
+                History(-1, -1, -1, -1, -1, "", -1, "", -1, -1)
+            )
+        )
 
         printLog("데이터 조회 및 사용가능 형태로 변환")
         historyItemListConverted.forEach {
@@ -231,7 +246,7 @@ class HistoryViewModel @Inject constructor(
         }
 
         withContext(Dispatchers.Main) {
-            if (historyItemListConverted.size == 0) {
+            if (historyItemListConverted.size == 1) {
                 _emptyEvent.emit(true)
             }
             _historyItemListFlow.value = historyItemListConverted
