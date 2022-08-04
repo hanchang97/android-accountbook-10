@@ -37,6 +37,8 @@ class SettingViewModel @Inject constructor(
     private val _categoryExpenditureListFlow = MutableStateFlow<List<Category>>(emptyList())
     val categoryExpenditureListFlow: StateFlow<List<Category>> = _categoryExpenditureListFlow
 
+    var selectedCategoryForEdit = Category(-1, 0, "")
+
     fun addCategory(categoryDao: CategoryDao) {
         viewModelScope.launch(Dispatchers.IO) {
             addCategoryUseCase(categoryDao)

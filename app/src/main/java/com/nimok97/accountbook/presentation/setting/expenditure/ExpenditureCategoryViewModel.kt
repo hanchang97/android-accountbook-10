@@ -55,18 +55,18 @@ class ExpenditureCategoryViewModel @Inject constructor(
                             _contentAlreadyExist.emit(true)
                         } else {
                             printLog("$content not exist")
-                            addMethod(CategoryDao(type, content, selectedColorString))
+                            addCategory(CategoryDao(type, content, selectedColorString))
                         }
                     }
                 }
                 result.isFailure -> {
-                    printLog("check method fail")
+                    printLog("check category fail")
                 }
             }
         }
     }
 
-    suspend fun addMethod(categoryDao: CategoryDao) {
+    suspend fun addCategory(categoryDao: CategoryDao) {
         val result = addCategoryUseCase.invoke(categoryDao)
         when {
             result.isSuccess -> {
