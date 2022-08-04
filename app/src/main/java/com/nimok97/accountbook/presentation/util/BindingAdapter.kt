@@ -1,5 +1,6 @@
 package com.nimok97.accountbook.presentation.util
 
+import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -104,4 +105,14 @@ fun applyDateSelected(view: TextView, dateStr: String) {
                 R.color.primary_purple
             )
         )
+}
+
+@BindingAdapter("statisticsVisibility")
+fun applyStatisticsVisibility(view: View, empty: Boolean) {
+   view.isVisible = !empty
+}
+
+@BindingAdapter("emptyTextVisibility")
+fun applyEmptyTextVisibility(view: View, empty: Boolean) {
+    view.isVisible = empty
 }
