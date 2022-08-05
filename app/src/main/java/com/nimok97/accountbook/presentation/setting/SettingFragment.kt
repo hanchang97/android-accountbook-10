@@ -189,7 +189,7 @@ class SettingFragment : Fragment() {
                         mainViewModel.moveToExpenditureCategoryFragment()
                     }
                     else -> {
-
+                        mainViewModel.moveToIncomeCategoryFragment()
                     }
                 }
             }) {
