@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- primary -->
+    <color name="primary_off_white">#F7F6F3</color>
+    <color name="primary_white">#FFFFFF</color>
+    <color name="primary_white_50">#80FFFFFF</color>
+    <color name="primary_purple">#524D90</color>
+    <color name="primary_light_purple">#A79FCB</color>
+    <color name="primary_yellow">#F5B853</color>
+    <color name="primary_yellow_50">#80F5B853</color>
+    <color name="primary_purple_40">#66A79FCB</color>
+    <color name="primary_red">#E75B3F</color>
+
+    <!-- secondary -->
+    <color name="blue1">#4A6CC3</color>
+    <color name="blue2">#2E86C7</color>
+    <color name="blue3">#4CA1DE</color>
+    <color name="blue4">#48C2E9</color>
+    <color name="blue5">#6ED5EB</color>
+    <color name="green1">#9FE7C8</color>
+    <color name="green2">#94D3CC</color>
+    <color name="green3">#4CB8B8</color>
+    <color name="green4">#40B98D</color>
+    <color name="green5">#2FA488</color>
+    <color name="purple1">#625EBA</color>
+    <color name="purple2">#817DCE</color>
+    <color name="purple3">#9B7DCE</color>
+    <color name="purple4">#B391EB</color>
+    <color name="purple5">#D092E2</color>
+    <color name="pink1">#F1B4EF</color>
+    <color name="pink2">#F4AEE1</color>
+    <color name="pink3">#F396B8</color>
+    <color name="pink4">#DC5D7B</color>
+    <color name="pink5">#CB588F</color>
+    <color name="olive1">#9BD182</color>
+    <color name="olive2">#A3CB7A</color>
+    <color name="olive3">#B5CC7A</color>
+    <color name="olive4">#CCD67A</color>
+    <color name="olive5">#EAE07C</color>
+    <color name="yellow1">#EDCF65</color>
+    <color name="yellow2">#EBC374</color>
+    <color name="yellow3">#E1AD60</color>
+    <color name="yellow4">#E29C4D</color>
+    <color name="yellow5">#E39145</color>
+
+    <color name="income">#4EAABA</color>
+    <color name="expenditure">#E75B3F</color>
+
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/fragment_history"
+        android:icon="@drawable/main_bottomnavigation_icon_history_selector"
+        android:title="@string/main_tab_history" />
+
+    <item
+        android:id="@+id/fragment_calendar"
+        android:icon="@drawable/main_bottomnavigation_icon_calendar_selector"
+        android:title="@string/main_tab_calendar" />
+
+    <item
+        android:id="@+id/fragment_statistics"
+        android:icon="@drawable/main_bottomnavigation_icon_statistics_selector"
+        android:title="@string/main_tab_statistics" />
+
+    <item
+        android:id="@+id/fragment_setting"
+        android:icon="@drawable/main_bottomnavigation_icon_setting_selector"
+        android:title="@string/main_tab_setting" />
+</menu>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AccountBook</string>
+    <string name="main_tab_history">내역</string>
+    <string name="main_tab_calendar">달력</string>
+    <string name="main_tab_statistics">통계</string>
+    <string name="main_tab_setting">설정</string>
+
+    <string name="content_price">%s원</string>
+    <string name="header_date">%d월 %d일 %s</string>
+    <string name="method_content_description">이름</string>
+</resources>

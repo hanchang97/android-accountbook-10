@@ -1,0 +1,255 @@
+package com.nimok97.accountbook.presentation
+
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.nimok97.accountbook.R
+import com.nimok97.accountbook.common.printLog
+import com.nimok97.accountbook.databinding.ActivityMainBinding
+import com.nimok97.accountbook.presentation.calendar.CalendarFragment
+import com.nimok97.accountbook.presentation.history.HistoryFragment
+import com.nimok97.accountbook.presentation.history.manage.add.AddHistoryFragment
+import com.nimok97.accountbook.presentation.history.manage.edit.EditHistoryFragment
+import com.nimok97.accountbook.presentation.setting.SettingFragment
+import com.nimok97.accountbook.presentation.setting.expenditure.ExpenditureCategoryFragment
+import com.nimok97.accountbook.presentation.setting.expenditure.edit.EditExpenditureCategoryFragment
+import com.nimok97.accountbook.presentation.setting.method.MethodFragment
+import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
+import com.nimok97.accountbook.presentation.util.FragmentStackManager
+import com.nimok97.accountbook.presentation.util.calculateCurrentDay
+import com.nimok97.accountbook.presentation.util.calculateCurrentMonth
+import com.nimok97.accountbook.presentation.util.calculateCurrentYear
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private val mainViewModel: MainViewModel by viewModels()
+
+    private var FINISH_INTERVAL_TIME: Long = 2000
+    private var backPressedTime: Long = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        initView()
+        collectData()
+    }
+
+    private fun initView() {
+        setBottomNavigation()
+        setTodayDate()
+        setCurrentDate()
+        changeTab(0, HistoryFragment(), R.id.fragment_history)
+    }
+
+    private fun setTodayDate() {
+        mainViewModel.todayYear = calculateCurrentYear()
+        mainViewModel.todayMonth = calculateCurrentMonth()
+        mainViewModel.todayDay = calculateCurrentDay()
+    }
+
+    private fun setCurrentDate() {
+        mainViewModel.currentYear = calculateCurrentYear()
+        mainViewModel.currentMonth = calculateCurrentMonth()
+        mainViewModel.currentDay = calculateCurrentDay()
+    }
+
+    private fun setBottomNavigation() {
+        binding.bnvMain.itemIconTintList = null
+
+        binding.bnvMain.apply {
+            setOnItemSelectedListener {
+                when (it.itemId) {
+                    R.id.fragment_history -> {
+                        if (this.selectedItemId != R.id.fragment_history)
+                            changeTab(0, HistoryFragment(), R.id.fragment_history)
+                    }
+                    R.id.fragment_calendar -> {
+                        if (this.selectedItemId != R.id.fragment_calendar) {
+                            val calendarFragment = CalendarFragment()
+                            changeTab(1, calendarFragment, R.id.fragment_calendar)
+                        }
+                    }
+                    R.id.fragment_statistics -> {
+                        if (this.selectedItemId != R.id.fragment_statistics)
+                            changeTab(2, StatisticsFragment(), R.id.fragment_statistics)
+                    }
+                    R.id.fragment_setting -> {
+                        if (this.selectedItemId != R.id.fragment_setting)
+                            changeTab(3, SettingFragment(), R.id.fragment_setting)
+                    }
+                }
+                true
+            }
+        }
+    }
+
+    private fun changeTab(tabIndex: Int, fragment: Fragment, id: Int) {
+        FragmentStackManager.clearAllStack()
+        FragmentStackManager.pushStack(tabIndex, fragment)
+        changeFragment(fragment)
+        binding.bnvMain.menu.getItem(tabIndex).isChecked = true
+        printLog("change tab to : $tabIndex inx")
+    }
+
+    private fun changeFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().replace(R.id.fcv_main, fragment)
+            .commit()
+    }
+
+    private fun collectData() {
+        collectFabCliked()
+        collectHistoryFragmentEvent()
+        collectSettingFragmentEvent()
+        collectBackEventInMethodFragment()
+        collectBackButtonInAppBarPressed()
+    }
+
+    private fun collectFabCliked() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.fabClickedEvent.collect {
+                    if (it) {
+                        val addHistoryFragment = AddHistoryFragment()
+                        FragmentStackManager.pushStack(0, addHistoryFragment)
+                        changeFragment(addHistoryFragment)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectHistoryFragmentEvent() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.moveToEditHistoryFragmentEvent.collect {
+                    if (it) {
+                        val editHistoryFragment = EditHistoryFragment()
+                        FragmentStackManager.pushStack(0, editHistoryFragment)
+                        changeFragment(editHistoryFragment)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectSettingFragmentEvent() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.moveToMethodFragmentEvent.collect {
+                    if (it) {
+                        val methodFragment = MethodFragment()
+                        FragmentStackManager.pushStack(3, methodFragment)
+                        changeFragment(methodFragment)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.moveToExpenditureCategoryFragmentEvent.collect {
+                    if (it) {
+                        val expenditureCategoryFragmentTest = ExpenditureCategoryFragment()
+                        FragmentStackManager.pushStack(3, expenditureCategoryFragmentTest)
+                        changeFragment(expenditureCategoryFragmentTest)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.moveToEditExpenditureCategoryFragmentEvent.collect {
+                    if (it) {
+                        val editExpenditureCategoryFragment = EditExpenditureCategoryFragment()
+                        FragmentStackManager.pushStack(3, editExpenditureCategoryFragment)
+                        changeFragment(editExpenditureCategoryFragment)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectBackEventInMethodFragment() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.backEventInMethodFragment.collect {
+                    if (it) {
+                        printLog("onback")
+                        onBackPressed()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectBackButtonInAppBarPressed() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.backButtonPressedEvent.collect {
+                    if (it) {
+                        printLog("onback")
+                        onBackPressed()
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        when (binding.bnvMain.selectedItemId) {
+            R.id.fragment_history -> {
+                if (FragmentStackManager.getStackSize(0) >= 2) {
+                    FragmentStackManager.popStack(0)
+                    changeFragment(FragmentStackManager.getTopStack(0))
+                } else {
+                    var tempTime = System.currentTimeMillis();
+                    var intervalTime = tempTime - backPressedTime;
+                    if (0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime) {
+                        super.onBackPressed();
+                    } else {
+                        backPressedTime = tempTime;
+                        Toast.makeText(this, "'뒤로' 버튼을 한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT)
+                            .show();
+                        return
+                    }
+                }
+            }
+            R.id.fragment_calendar -> {
+                if (FragmentStackManager.getStackSize(1) >= 2) {
+                    FragmentStackManager.popStack(1)
+                    changeFragment(FragmentStackManager.getTopStack(1))
+                } else {
+                    changeTab(0, HistoryFragment(), R.id.fragment_history)
+                }
+            }
+            R.id.fragment_statistics -> {
+                if (FragmentStackManager.getStackSize(2) >= 2) {
+                    FragmentStackManager.popStack(2)
+                    changeFragment(FragmentStackManager.getTopStack(2))
+                } else {
+                    changeTab(0, HistoryFragment(), R.id.fragment_history)
+                }
+            }
+            else -> {
+                if (FragmentStackManager.getStackSize(3) >= 2) {
+                    FragmentStackManager.popStack(3)
+                    changeFragment(FragmentStackManager.getTopStack(3))
+                } else {
+                    changeTab(0, HistoryFragment(), R.id.fragment_history)
+                }
+            }
+        }
+    }
+}

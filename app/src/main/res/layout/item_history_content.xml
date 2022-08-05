@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.graphics.Color" />
+
+        <variable
+            name="category"
+            type="com.nimok97.accountbook.domain.model.Category" />
+
+        <variable
+            name="method"
+            type="com.nimok97.accountbook.domain.model.Method" />
+
+        <variable
+            name="history"
+            type="com.nimok97.accountbook.domain.model.History" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_start"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_end"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <View
+            android:id="@+id/view_empty_top"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="360:8"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/cb_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary_red"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="@{Color.parseColor(category.color)}"
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toEndOf="@id/cb_delete"
+            app:layout_constraintTop_toBottomOf="@id/view_empty_top"
+            app:shapeAppearanceOverlay="@style/cardViewRadius"
+            tools:backgroundTint="#4CA1DE">
+
+            <TextView
+                android:id="@+id/tv_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kopubworld_dotum_pro_bold"
+                android:gravity="center"
+                android:minWidth="60dp"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="2dp"
+                android:text="@{category.content}"
+                android:textColor="@color/white"
+                android:textSize="10sp" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:text="@{history.content}"
+            android:textColor="@color/primary_purple"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/cb_delete"
+            app:layout_constraintTop_toBottomOf="@id/cv_category"
+            tools:text="체육관 수강 등록" />
+
+        <TextView
+            android:id="@+id/tv_method"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kopubworld_dotum_pro_medium"
+            android:text="@{method.content}"
+            android:textColor="@color/primary_purple"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintTop_toBottomOf="@id/view_empty_top"
+            tools:text="현대카드" />
+
+        <TextView
+            android:id="@+id/tv_amount"
+            historyType="@{history.type}"
+            priceAmount="@{history.amount}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kopubworld_dotum_pro_bold"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_content"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintTop_toTopOf="@id/tv_content"
+            tools:text="-6,500원" />
+
+        <View
+            android:id="@+id/view_empty_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="360:8"
+            app:layout_constraintTop_toBottomOf="@id/tv_content" />
+
+        <View
+            android:id="@+id/view_divider_not_last"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/primary_purple_40"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.9" />
+
+        <View
+            android:id="@+id/view_divider_last"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/primary_light_purple"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
