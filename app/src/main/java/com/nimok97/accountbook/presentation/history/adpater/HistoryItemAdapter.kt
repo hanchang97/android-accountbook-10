@@ -1,5 +1,6 @@
 package com.nimok97.accountbook.presentation.history.adpater
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +59,9 @@ class HistoryItemAdapter(
             binding.history = historyItem.history
             binding.category = historyItem.category
             binding.method = historyItem.method
+            historyItem.category?.let {
+                binding.tvCategory.setBackgroundColor(Color.parseColor(it.color))
+            }
 
             historyItem.isLastItem?.let {
                 if (it) {
