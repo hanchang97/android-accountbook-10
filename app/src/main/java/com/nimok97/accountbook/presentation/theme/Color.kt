@@ -65,3 +65,16 @@ val Category_Expenditure_Color_List: List<String> = listOf(
     "#CB588F"
 )
 
+val Category_Income_Color_List: List<String> = listOf(
+    "#9BD182",
+    "#A3CB7A",
+    "#B5CC7A",
+    "#CCD67A",
+    "#EAE07C",
+    "#EDCF65",
+    "#EBC374",
+    "#E1AD60",
+    "#E29C4D",
+    "#E39145"
+)
+
