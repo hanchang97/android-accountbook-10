@@ -160,6 +160,7 @@ class AddHistoryFragment : Fragment() {
                             ) {
                                 if (position == methodSpinnerList.lastIndex - 1) {
                                     // 추가하기
+                                    mainViewModel.moveToMethodFragment()
                                 } else {
                                     adapterView?.findViewById<TextView>(R.id.tv_content)?.text =
                                         methodSpinnerList[position].content
@@ -204,6 +205,7 @@ class AddHistoryFragment : Fragment() {
                             ) {
                                 if (position == categorySpinnerList.lastIndex - 1) {
                                     // 추가하기 기능
+                                    mainViewModel.moveToIncomeCategoryFragment()
                                 } else {
                                     adapterView?.findViewById<TextView>(R.id.tv_content)?.text =
                                         categorySpinnerList[position].content
@@ -249,6 +251,7 @@ class AddHistoryFragment : Fragment() {
                             ) {
                                 if (position == categorySpinnerList.lastIndex - 1) {
                                     // 추가하기 기능
+                                    mainViewModel.moveToExpenditureCategoryFragment()
                                 } else {
                                     adapterView?.findViewById<TextView>(R.id.tv_content)?.text =
                                         categorySpinnerList[position].content

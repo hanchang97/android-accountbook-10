@@ -22,10 +22,7 @@ import com.nimok97.accountbook.presentation.setting.expenditure.edit.EditExpendi
 import com.nimok97.accountbook.presentation.setting.income.IncomeCategoryFragment
 import com.nimok97.accountbook.presentation.setting.method.MethodFragment
 import com.nimok97.accountbook.presentation.statistics.StatisticsFragment
-import com.nimok97.accountbook.presentation.util.FragmentStackManager
-import com.nimok97.accountbook.presentation.util.calculateCurrentDay
-import com.nimok97.accountbook.presentation.util.calculateCurrentMonth
-import com.nimok97.accountbook.presentation.util.calculateCurrentYear
+import com.nimok97.accountbook.presentation.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -50,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         setBottomNavigation()
         setTodayDate()
         setCurrentDate()
-        changeTab(0, HistoryFragment(), R.id.fragment_history)
+        changeTab(0, TAG_HISTORY, R.id.fragment_history)
     }
 
     private fun setTodayDate() {
@@ -73,21 +70,21 @@ class MainActivity : AppCompatActivity() {
                 when (it.itemId) {
                     R.id.fragment_history -> {
                         if (this.selectedItemId != R.id.fragment_history)
-                            changeTab(0, HistoryFragment(), R.id.fragment_history)
+                            changeTab(0, TAG_HISTORY, R.id.fragment_history)
                     }
                     R.id.fragment_calendar -> {
                         if (this.selectedItemId != R.id.fragment_calendar) {
                             val calendarFragment = CalendarFragment()
-                            changeTab(1, calendarFragment, R.id.fragment_calendar)
+                            changeTab(1, TAG_CALENDAR, R.id.fragment_calendar)
                         }
                     }
                     R.id.fragment_statistics -> {
                         if (this.selectedItemId != R.id.fragment_statistics)
-                            changeTab(2, StatisticsFragment(), R.id.fragment_statistics)
+                            changeTab(2, TAG_STATISTICS, R.id.fragment_statistics)
                     }
                     R.id.fragment_setting -> {
                         if (this.selectedItemId != R.id.fragment_setting)
-                            changeTab(3, SettingFragment(), R.id.fragment_setting)
+                            changeTab(3, TAG_SETTING, R.id.fragment_setting)
                     }
                 }
                 true
@@ -95,16 +92,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun changeTab(tabIndex: Int, fragment: Fragment, id: Int) {
+    private fun changeTab(tabIndex: Int, tag: String, id: Int) {
         FragmentStackManager.clearAllStack()
-        FragmentStackManager.pushStack(tabIndex, fragment)
-        changeFragment(fragment)
+        FragmentStackManager.pushStack(tabIndex, tag)
+        changeFragment(tag)
         binding.bnvMain.menu.getItem(tabIndex).isChecked = true
         printLog("change tab to : $tabIndex inx")
     }
 
-    private fun changeFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.fcv_main, fragment)
+    private fun changeFragment(tag: String) {
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fcv_main,
+            FragmentStackManager.returnFragmentByTag(tag)
+        )
             .commit()
     }
 
@@ -121,9 +121,8 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.fabClickedEvent.collect {
                     if (it) {
-                        val addHistoryFragment = AddHistoryFragment()
-                        FragmentStackManager.pushStack(0, addHistoryFragment)
-                        changeFragment(addHistoryFragment)
+                        FragmentStackManager.pushStack(0, TAG_HISTORY_ADD)
+                        changeFragment(TAG_HISTORY_ADD)
                     }
                 }
             }
@@ -135,9 +134,8 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToEditHistoryFragmentEvent.collect {
                     if (it) {
-                        val editHistoryFragment = EditHistoryFragment()
-                        FragmentStackManager.pushStack(0, editHistoryFragment)
-                        changeFragment(editHistoryFragment)
+                        FragmentStackManager.pushStack(0, TAG_HISTORY_EDIT)
+                        changeFragment(TAG_HISTORY_EDIT)
                     }
                 }
             }
@@ -149,9 +147,16 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToMethodFragmentEvent.collect {
                     if (it) {
-                        val methodFragment = MethodFragment()
-                        FragmentStackManager.pushStack(3, methodFragment)
-                        changeFragment(methodFragment)
+                        when (binding.bnvMain.selectedItemId) {
+                            R.id.fragment_history -> {
+                                FragmentStackManager.pushStack(0, TAG_SETTING_METHOD)
+                                changeFragment(TAG_SETTING_METHOD)
+                            }
+                            else -> {
+                                FragmentStackManager.pushStack(3, TAG_SETTING_METHOD)
+                                changeFragment(TAG_SETTING_METHOD)
+                            }
+                        }
                     }
                 }
             }
@@ -161,9 +166,16 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToExpenditureCategoryFragmentEvent.collect {
                     if (it) {
-                        val expenditureCategoryFragmentTest = ExpenditureCategoryFragment()
-                        FragmentStackManager.pushStack(3, expenditureCategoryFragmentTest)
-                        changeFragment(expenditureCategoryFragmentTest)
+                        when (binding.bnvMain.selectedItemId) {
+                            R.id.fragment_history -> {
+                                FragmentStackManager.pushStack(0, TAG_SETTING_EXPENDITURE)
+                                changeFragment(TAG_SETTING_EXPENDITURE)
+                            }
+                            else -> {
+                                FragmentStackManager.pushStack(3, TAG_SETTING_EXPENDITURE)
+                                changeFragment(TAG_SETTING_EXPENDITURE)
+                            }
+                        }
                     }
                 }
             }
@@ -173,9 +185,8 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToEditExpenditureCategoryFragmentEvent.collect {
                     if (it) {
-                        val editExpenditureCategoryFragment = EditExpenditureCategoryFragment()
-                        FragmentStackManager.pushStack(3, editExpenditureCategoryFragment)
-                        changeFragment(editExpenditureCategoryFragment)
+                        FragmentStackManager.pushStack(3, TAG_SETTING_EXPENDITURE_EDIT)
+                        changeFragment(TAG_SETTING_EXPENDITURE_EDIT)
                     }
                 }
             }
@@ -185,9 +196,16 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.moveToIncomeCategoryFragmentEvent.collect {
                     if (it) {
-                        val incomeCategoryFragment = IncomeCategoryFragment()
-                        FragmentStackManager.pushStack(3, incomeCategoryFragment)
-                        changeFragment(incomeCategoryFragment)
+                        when (binding.bnvMain.selectedItemId) {
+                            R.id.fragment_history -> {
+                                FragmentStackManager.pushStack(0, TAG_SETTING_INCOME)
+                                changeFragment(TAG_SETTING_INCOME)
+                            }
+                            else -> {
+                                FragmentStackManager.pushStack(3, TAG_SETTING_INCOME)
+                                changeFragment(TAG_SETTING_INCOME)
+                            }
+                        }
                     }
                 }
             }
@@ -244,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                     FragmentStackManager.popStack(1)
                     changeFragment(FragmentStackManager.getTopStack(1))
                 } else {
-                    changeTab(0, HistoryFragment(), R.id.fragment_history)
+                    changeTab(0, TAG_HISTORY, R.id.fragment_history)
                 }
             }
             R.id.fragment_statistics -> {
@@ -252,7 +270,7 @@ class MainActivity : AppCompatActivity() {
                     FragmentStackManager.popStack(2)
                     changeFragment(FragmentStackManager.getTopStack(2))
                 } else {
-                    changeTab(0, HistoryFragment(), R.id.fragment_history)
+                    changeTab(0, TAG_HISTORY, R.id.fragment_history)
                 }
             }
             else -> {
@@ -260,7 +278,7 @@ class MainActivity : AppCompatActivity() {
                     FragmentStackManager.popStack(3)
                     changeFragment(FragmentStackManager.getTopStack(3))
                 } else {
-                    changeTab(0, HistoryFragment(), R.id.fragment_history)
+                    changeTab(0, TAG_HISTORY, R.id.fragment_history)
                 }
             }
         }

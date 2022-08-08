@@ -211,6 +211,7 @@ class EditHistoryFragment : Fragment() {
                             ) {
                                 if (position == methodSpinnerList.lastIndex - 1) {
                                     // 추가하기
+                                    mainViewModel.moveToMethodFragment()
                                 } else {
                                     adapterView?.findViewById<TextView>(R.id.tv_content)?.text =
                                         methodSpinnerList[position].content
@@ -260,6 +261,10 @@ class EditHistoryFragment : Fragment() {
                             ) {
                                 if (position == categorySpinnerList.lastIndex - 1) {
                                     // 추가하기 기능
+                                    when(editHistoryViewModel.categoryType) {
+                                        0 -> mainViewModel.moveToIncomeCategoryFragment()
+                                        1 -> mainViewModel.moveToExpenditureCategoryFragment()
+                                    }
                                 } else {
                                     adapterView?.findViewById<TextView>(R.id.tv_content)?.text =
                                         categorySpinnerList[position].content
